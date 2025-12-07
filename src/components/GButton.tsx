@@ -1,81 +1,174 @@
-// components/Button.tsx
-import React from "react";
-import type { JSX } from "react";
+// components/GButton.tsx
+import React, { ElementType, forwardRef } from "react";
 import clsx from "clsx";
 
-type Variant = "primary" | "secondary" | "outline" | "ghost" | "danger";
+/**
+ * Polymorphic GButton
+ * - as?: render element (defaults to "button")
+ * - loading?: show spinner and force disabled
+ * - variant, size follow your existing API
+ */
+
+/* Variants & sizes */
+type Variant = "primary" | "secondary" | "outline" | "ghost" | "destructive";
 type Size = "sm" | "md" | "lg";
 
-export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+export type BaseButtonProps = {
   variant?: Variant;
   size?: Size;
-  as?: keyof JSX.IntrinsicElements;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  loading?: boolean;
+  className?: string;
 };
 
-/**
- * Tailwind-based Button with theme variants.
- * - Uses `fill`/solid styles for primary/secondary/danger
- * - Outline and ghost are transparent/outlined
- * - Sizes control padding and font-size
- */
+/* Polymorphic prop helpers */
+type AsProp<E extends ElementType> = { as?: E };
+type PropsToOmit<E extends ElementType, P> = P &
+  Omit<React.ComponentPropsWithoutRef<E>, keyof P>;
+
+export type GButtonProps<E extends ElementType = "button"> = PropsToOmit<
+  E,
+  BaseButtonProps & AsProp<E>
+>;
+
+/* Tailwind classes for variants & sizes (kept your theme tokens) */
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:ring-indigo-500",
+    "bg-primary text-primary-foreground hover:bg-[color:var(--primary)]/90 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--ring)]",
   secondary:
-    "bg-white text-indigo-700 border border-indigo-200 hover:bg-indigo-50 focus-visible:ring-indigo-300",
+    "bg-secondary text-secondary-foreground hover:bg-[color:var(--secondary)]/95 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--ring)]",
   outline:
-    "bg-transparent text-indigo-700 border border-indigo-300 hover:bg-indigo-50 focus-visible:ring-indigo-300",
+    "bg-transparent text-primary border border-[color:var(--border)] hover:bg-[color:var(--primary)]/10 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--ring)]",
   ghost:
-    "bg-transparent text-gray-700 hover:bg-gray-100 focus-visible:ring-gray-300",
-  danger: "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500",
+    "bg-transparent text-foreground hover:bg-[color:var(--muted)]/20 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--ring)]",
+  destructive:
+    "bg-destructive text-destructive-foreground hover:bg-destructive/95 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--ring)]",
 };
 
 const sizeClasses: Record<Size, string> = {
-  sm: "text-sm px-3 py-1.5",
-  md: "text-sm px-4 py-2",
-  lg: "text-base px-5 py-3",
+  sm: "px-3 py-1.5 text-sm",
+  md: "px-4 py-2 text-sm",
+  lg: "px-5 py-3 text-base",
 };
 
 const baseClasses =
-  "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
+  "inline-flex items-center justify-center rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed select-none";
 
-const GButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      variant = "primary",
-      size = "md",
-      className,
-      children,
-      leftIcon,
-      rightIcon,
-      disabled,
-      ...rest
-    },
-    ref
-  ) => {
-    const classes = clsx(
-      baseClasses,
-      variantClasses[variant],
-      sizeClasses[size],
-      className
-    );
-
-    return (
-      <button ref={ref} className={classes} disabled={disabled} {...rest}>
-        {leftIcon && (
-          <span className="mr-2 inline-flex items-center">{leftIcon}</span>
-        )}
-        <span>{children}</span>
-        {rightIcon && (
-          <span className="ml-2 inline-flex items-center">{rightIcon}</span>
-        )}
-      </button>
-    );
-  }
+/* Small accessible spinner */
+const Spinner = ({ className = "" }: { className?: string }) => (
+  <svg
+    className={clsx("animate-spin", className)}
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+    width="16"
+    height="16"
+  >
+    <circle
+      className="opacity-25"
+      cx="12"
+      cy="12"
+      r="10"
+      stroke="currentColor"
+      strokeWidth="4"
+    />
+    <path
+      className="opacity-75"
+      fill="currentColor"
+      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+    />
+  </svg>
 );
 
-GButton.displayName = "Button";
+/**
+ * Polymorphic ForwardRef component
+ */
+const GButtonInner = <E extends ElementType = "button">(
+  {
+    as,
+    variant = "primary",
+    size = "md",
+    leftIcon,
+    rightIcon,
+    loading = false,
+    className,
+    children,
+    ...rest
+  }: GButtonProps<E>,
+  ref: React.Ref<E>
+) => {
+  const Component = (as || "button") as ElementType;
+  const isButton = Component === "button";
+
+  const classes = clsx(
+    baseClasses,
+    variantClasses[variant],
+    sizeClasses[size],
+    className
+  );
+
+  // If loading, force disabled semantics
+  const ariaDisabled =
+    (rest as React.ButtonHTMLAttributes<HTMLButtonElement>).disabled || loading;
+
+  // If rendering a non-button element, avoid passing `disabled` prop (use aria-disabled instead)
+  let props: React.ComponentPropsWithoutRef<ElementType>;
+
+  if (isButton) {
+    // For button, include disabled and type
+    props = {
+      ref,
+      className: classes,
+      disabled: ariaDisabled,
+      type:
+        (rest as React.ButtonHTMLAttributes<HTMLButtonElement>).type ??
+        "button",
+      "aria-busy": loading ? true : undefined,
+      ...rest,
+    };
+  } else {
+    // For other elements, use aria-disabled
+    props = {
+      ref,
+      className: classes,
+      "aria-disabled": ariaDisabled ? true : undefined,
+      "aria-busy": loading ? true : undefined,
+      ...rest,
+    };
+  }
+
+  return (
+    <Component {...(props as React.ComponentPropsWithoutRef<E>)}>
+      {loading ? (
+        // center spinner + visually hidden text for screen readers
+        <span className="inline-flex items-center gap-2">
+          <Spinner className="text-current" />
+          <span
+            aria-hidden={!children}
+            className={children ? "sr-only" : undefined}
+          >
+            {children}
+          </span>
+        </span>
+      ) : (
+        <>
+          {leftIcon && (
+            <span className="mr-2 inline-flex items-center">{leftIcon}</span>
+          )}
+          <span>{children}</span>
+          {rightIcon && (
+            <span className="ml-2 inline-flex items-center">{rightIcon}</span>
+          )}
+        </>
+      )}
+    </Component>
+  );
+};
+
+const GButton = forwardRef(GButtonInner) as <E extends ElementType = "button">(
+  props: GButtonProps<E> & { ref?: React.Ref<unknown> }
+) => React.ReactElement | null;
 
 export default GButton;
