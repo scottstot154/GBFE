@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import GButton from "./GButton";
 
 export type Dress = {
   id: string;
@@ -32,9 +33,9 @@ const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
 
         <div className="mt-3 flex items-center justify-between">
           <span className="font-bold">₹{dress.price.toFixed(0)}</span>
-          <button className="px-3 py-1 rounded-md bg-indigo-600 text-white text-sm">
+          <GButton variant="primary" size="sm">
             View
-          </button>
+          </GButton>
         </div>
       </div>
     </div>
