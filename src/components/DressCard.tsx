@@ -3,9 +3,9 @@ import Image from "next/image";
 import GButton from "./GButton";
 
 export type Dress = {
-  id: string;
+  collection_id: string;
   name: string;
-  price: number;
+  cost: number;
   image?: string;
   description?: string;
 };
@@ -34,7 +34,7 @@ const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
 
         <div className="mt-4 flex items-center justify-between">
           <span className="font-bold text-foreground">
-            ₹{dress.price.toFixed(0)}
+            ₹{dress.cost.toFixed(0)}
           </span>
 
           <GButton variant="primary" size="sm">
