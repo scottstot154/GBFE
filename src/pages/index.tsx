@@ -1,35 +1,11 @@
 import Head from "next/head";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
 import DressCard from "@/components/DressCard";
-import type { Dress } from "@/components/DressCard";
 import NavBar from "@/components/NavBar";
 import Banner from "@/components/Banner";
+import { useCollections } from "@/hooks/useCollections";
 
 export default function Home() {
-  const [dresses, setDresses] = useState<Dress[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let mounted = true;
-
-    async function load() {
-      setLoading(true);
-      const { data, error } = await supabase.from("collections").select("*");
-
-      if (error) {
-        console.error("fetch dresses error:", error);
-      } else if (mounted && data) {
-        setDresses(data as Dress[]);
-      }
-      setLoading(false);
-    }
-
-    load();
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const { collections, isLoading: isCollectionsLoading } = useCollections();
 
   return (
     <>
@@ -51,11 +27,11 @@ export default function Home() {
               Handmade · Ethically sourced
             </p>
           </div>
-          {loading ? (
+          {isCollectionsLoading ? (
             <div>Loading...</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {dresses.map((d) => (
+              {collections.map((d) => (
                 <DressCard key={d.collection_id} dress={d} />
               ))}
             </div>
