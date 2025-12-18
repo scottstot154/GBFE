@@ -52,8 +52,12 @@ export const api = createApi({
           : [{ type: "Collections", id: "LIST" }],
     }),
 
-    getCollection: build.query<TCollection, string>({
-      query: (id) => ({ url: `/collections/${id}`, method: "GET" }),
+    getCollection: build.query<TCollection | undefined, string>({
+      query: (id) => ({
+        url: `/collections?collection_id=eq.${id}`,
+        method: "GET",
+      }),
+      transformResponse: (res: TCollection[]) => res[0],
       providesTags: (result, error, id) => [{ type: "Collections", id }],
     }),
 

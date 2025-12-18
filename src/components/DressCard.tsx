@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import GButton from "./GButton";
+import Link from "next/link";
 
 export type Dress = {
   collection_id: string;
@@ -37,9 +38,11 @@ const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
             ₹{dress.cost.toFixed(0)}
           </span>
 
-          <GButton variant="primary" size="sm">
-            View
-          </GButton>
+          <Link href={`/collection/${dress.collection_id}`}>
+            <GButton variant="primary" size="sm">
+              View
+            </GButton>
+          </Link>
         </div>
       </div>
     </div>
