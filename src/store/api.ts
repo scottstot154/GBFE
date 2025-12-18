@@ -1,7 +1,6 @@
 // src/store/api.ts
 import { supabase } from "@/utils/supabase";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-// import { supabase } from './supabaseClient'; // or however you access supabase
 
 const baseUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1` || "/api";
 const baseQuery = fetchBaseQuery({
