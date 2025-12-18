@@ -2,10 +2,11 @@ import Head from "next/head";
 import DressCard from "@/components/DressCard";
 import NavBar from "@/components/NavBar";
 import Banner from "@/components/Banner";
-import { useCollections } from "@/hooks/useCollections";
+import { useGetCollectionsQuery } from "@/store/api";
 
 export default function Home() {
-  const { collections, isLoading: isCollectionsLoading } = useCollections();
+  const { data: collections, isLoading: isCollectionsLoading } =
+    useGetCollectionsQuery();
 
   return (
     <>
@@ -31,7 +32,7 @@ export default function Home() {
             <div>Loading...</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {collections.map((d) => (
+              {collections?.map((d) => (
                 <DressCard key={d.collection_id} dress={d} />
               ))}
             </div>
