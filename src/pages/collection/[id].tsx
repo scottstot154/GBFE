@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { useGetCollectionQuery } from "@/store/api";
-import NavBar from "@/components/NavBar";
 import GButton from "@/components/GButton";
 import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
@@ -46,8 +45,6 @@ export default function CollectionDetails() {
 
   return (
     <>
-      <NavBar />
-
       {/* ---------------- MAIN CONTENT ---------------- */}
       <main className="max-w-6xl mx-auto px-4 py-10 pb-24 md:pb-10">
         <div className="grid md:grid-cols-2 gap-10">

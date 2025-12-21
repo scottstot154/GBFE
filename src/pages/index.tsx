@@ -1,6 +1,5 @@
 import Head from "next/head";
 import DressCard from "@/components/DressCard";
-import NavBar from "@/components/NavBar";
 import Banner from "@/components/Banner";
 import { useGetCollectionsQuery } from "@/store/api";
 
@@ -13,7 +12,6 @@ export default function Home() {
       <Head>
         <title>Boutique - Home</title>
       </Head>
-      <NavBar />
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">
         <Banner
           title="Summer Collection — Light & Breezy"
