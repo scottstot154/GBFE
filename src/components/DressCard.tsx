@@ -94,7 +94,7 @@ const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
           onTouchHoldStart();
         }}
         onTouchMove={onTouchMove}
-        onTouchEnd={(e) => {
+        onTouchEnd={() => {
           onTouchEnd();
           onTouchHoldEnd();
         }}
@@ -113,7 +113,7 @@ const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
                 src={img}
                 alt={`${dress.name} image ${idx + 1}`}
                 fill
-                className="object-cover"
+                className="object-contain"
               />
             </div>
           ))}

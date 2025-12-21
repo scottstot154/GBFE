@@ -1,4 +1,3 @@
-// pages/dress/[id].tsx
 import { useRouter } from "next/router";
 import { useGetCollectionQuery } from "@/store/api";
 import NavBar from "@/components/NavBar";
@@ -6,6 +5,7 @@ import GButton from "@/components/GButton";
 import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
 import { useState } from "react";
+import Lightbox from "@/components/Lightbox";
 
 export default function CollectionDetails() {
   const router = useRouter();
@@ -15,16 +15,22 @@ export default function CollectionDetails() {
     data: dress,
     isLoading,
     isError,
-  } = useGetCollectionQuery(id as string, {
-    skip: !id,
-  });
+  } = useGetCollectionQuery(id as string, { skip: !id });
 
-  // const [createOrder] = useCreateOrderMutation();
+  const images: string[] = dress?.images?.length
+    ? dress.images
+    : dress?.image
+    ? [dress.image]
+    : ["/dress-placeholder.png"];
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [zoom, setZoom] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  /* ---------------- BUY HANDLER ---------------- */
   async function handleBuy() {
     setLoading(true);
-
     const { data } = await supabase.auth.getSession();
     const token = data?.session?.access_token;
 
@@ -32,21 +38,7 @@ export default function CollectionDetails() {
       router.push(`/login?redirect=/dress/${id}`);
       return;
     }
-
-    // try {
-    //   const res = await createOrder({
-    //     dressId: id as string,
-    //     quantity: 1,
-    //     token,
-    //   }).unwrap();
-
-    //   router.push(`/orders/${res.data.id}`);
-    // } catch (err) {
-    //   console.error(err);
-    //   alert("Order failed");
-    // } finally {
-    //   setLoading(false);
-    // }
+    setLoading(false);
   }
 
   if (isLoading) return <div className="p-6">Loading...</div>;
@@ -56,25 +48,87 @@ export default function CollectionDetails() {
     <>
       <NavBar />
 
-      <main className="max-w-5xl mx-auto px-4 py-10">
+      {/* ---------------- MAIN CONTENT ---------------- */}
+      <main className="max-w-6xl mx-auto px-4 py-10 pb-24 md:pb-10">
         <div className="grid md:grid-cols-2 gap-10">
-          {/* Image */}
-          <div className="relative w-full h-96 bg-[color:var(--card)] rounded-lg shadow-sm overflow-hidden">
-            <Image
-              src={dress.image || "/dress-placeholder.png"}
-              alt={dress.name}
-              fill
-              className="object-cover"
-            />
+          {/* IMAGE GALLERY */}
+          <div>
+            <div
+              className="relative w-full h-96 rounded-lg overflow-hidden bg-[color:var(--card)] shadow-sm cursor-zoom-in"
+              onMouseEnter={() => setZoom(true)}
+              onMouseLeave={() => setZoom(false)}
+              onClick={() => setLightboxOpen(true)}
+            >
+              <div
+                className={`absolute inset-0 transition-transform duration-300 ${
+                  zoom ? "scale-110" : "scale-100"
+                }`}
+              >
+                <Image
+                  src={images[activeIndex]}
+                  alt={dress.name}
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+
+              {images.length > 1 && (
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveIndex(
+                        activeIndex === 0 ? images.length - 1 : activeIndex - 1
+                      );
+                    }}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/20 backdrop-blur text-white px-3 py-1 rounded-full"
+                  >
+                    ‹
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveIndex(
+                        activeIndex === images.length - 1 ? 0 : activeIndex + 1
+                      );
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/20 backdrop-blur text-white px-3 py-1 rounded-full"
+                  >
+                    ›
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Thumbnails */}
+            {images.length > 1 && (
+              <div className="flex gap-3 mt-4 overflow-x-auto">
+                {images.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveIndex(idx)}
+                    className={`relative w-20 h-20 rounded-md overflow-hidden border ${
+                      idx === activeIndex
+                        ? "border-[color:var(--primary)]"
+                        : "border-[color:var(--border)]"
+                    }`}
+                  >
+                    <Image src={img} alt="" fill className="object-contain" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Info */}
-          <div className="flex flex-col space-y-4">
+          {/* INFO */}
+          <div className="space-y-4">
             <h1 className="text-3xl font-semibold text-foreground">
               {dress.name}
             </h1>
 
-            <p className="text-foreground/70 leading-relaxed">
+            <p className="text-foreground/70">
               {dress.description || "Beautiful handcrafted dress."}
             </p>
 
@@ -82,19 +136,35 @@ export default function CollectionDetails() {
               ₹{dress.cost.toFixed(0)}
             </div>
 
-            <div className="pt-4">
-              <GButton
-                variant="primary"
-                size="lg"
-                disabled={loading}
-                onClick={handleBuy}
-              >
-                {loading ? "Processing..." : "Buy Now"}
+            {/* Desktop CTA */}
+            <div className="hidden md:block pt-4">
+              <GButton size="lg" onClick={handleBuy} disabled={loading}>
+                Buy Now
               </GButton>
             </div>
           </div>
         </div>
       </main>
+
+      {/* ---------------- MOBILE STICKY CTA ---------------- */}
+      <div className="fixed bottom-0 left-0 right-0 md:hidden bg-card border-t border-[color:var(--border)] px-4 py-3 flex items-center justify-between z-40">
+        <span className="font-semibold text-foreground">
+          ₹{dress.cost.toFixed(0)}
+        </span>
+        <GButton size="md" onClick={handleBuy} disabled={loading}>
+          Buy Now
+        </GButton>
+      </div>
+
+      {/* ---------------- FULLSCREEN LIGHTBOX ---------------- */}
+      {lightboxOpen && (
+        <Lightbox
+          images={images}
+          index={activeIndex}
+          onClose={() => setLightboxOpen(false)}
+          onChange={setActiveIndex}
+        />
+      )}
     </>
   );
 }
