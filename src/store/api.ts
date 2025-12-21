@@ -30,6 +30,7 @@ type TCollection = {
   cost: number;
   image?: string;
   description?: string;
+  images: string[];
 };
 
 export const api = createApi({
