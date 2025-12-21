@@ -1,44 +1,24 @@
-"use client";
+import { supabaseServer } from "@/lib/supabaseServer";
+import HomeClient from "./home/HomeClient";
 
-import Head from "next/head";
-import DressCard from "@/components/DressCard";
-import Banner from "@/components/Banner";
-import { useGetCollectionsQuery } from "@/store/api";
+export const metadata = {
+  title: "Boutique - Home",
+  description: "Handcrafted, ethically sourced dresses",
+};
 
-export default function Home() {
-  const { data: collections, isLoading: isCollectionsLoading } =
-    useGetCollectionsQuery();
+export default async function HomePage() {
+  const { data: collections, error } = await supabaseServer
+    .from("collections")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return <div className="p-6">Failed to load collections.</div>;
+  }
 
   return (
-    <>
-      <Head>
-        <title>Boutique - Home</title>
-      </Head>
-      <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">
-        <Banner
-          title="Summer Collection — Light & Breezy"
-          subtitle="Handpicked pieces for the sunny season. Limited stocks available."
-          imageUrl="/images/banner-summer.jpg"
-        />
-
-        <section>
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold">Featured Collection</h2>
-            <p className="text-sm text-gray-500">
-              Handmade · Ethically sourced
-            </p>
-          </div>
-          {isCollectionsLoading ? (
-            <div>Loading...</div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {collections?.map((d) => (
-                <DressCard key={d.collection_id} dress={d} />
-              ))}
-            </div>
-          )}
-        </section>
-      </main>
-    </>
+    <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">
+      <HomeClient collections={collections ?? []} />
+    </main>
   );
 }
