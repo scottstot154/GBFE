@@ -1,13 +1,15 @@
+"use client";
+
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import React from "react";
 
 const NavBar: React.FC = () => {
-  const router = useRouter();
+  const pathname = usePathname();
 
   const linkBase = "px-3 py-2 rounded-md text-sm font-medium transition-colors";
 
-  const isActive = (path: string) => router.pathname === path;
+  const isActive = (path: string) => pathname === path;
 
   return (
     <nav className="bg-card border-b border-[color:var(--border)]">

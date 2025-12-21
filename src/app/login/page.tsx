@@ -1,6 +1,5 @@
-// src/pages/login.tsx
-import Head from "next/head";
-import NavBar from "../components/NavBar";
+"use client";
+
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -28,12 +27,6 @@ export default function Login() {
 
   return (
     <>
-      <Head>
-        <title>Login - Boutique</title>
-      </Head>
-
-      <NavBar />
-
       <main className="max-w-md mx-auto px-4 py-12">
         <h1 className="text-2xl font-semibold text-foreground">Login</h1>
         <p className="text-sm text-foreground/70 mt-1">
