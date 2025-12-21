@@ -1,14 +1,17 @@
-import { useRouter } from "next/router";
+"use client";
+
 import { useGetCollectionQuery } from "@/store/api";
 import GButton from "@/components/GButton";
 import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
 import { useState } from "react";
 import Lightbox from "@/components/Lightbox";
+import { useParams, useRouter } from "next/navigation";
 
 export default function CollectionDetails() {
   const router = useRouter();
-  const { id } = router.query;
+  const params = useParams();
+  const id = params?.id;
 
   const {
     data: dress,

@@ -1,3 +1,5 @@
+"use client";
+
 import Head from "next/head";
 import DressCard from "@/components/DressCard";
 import Banner from "@/components/Banner";
