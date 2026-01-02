@@ -2,6 +2,7 @@
 
 import DressCard from "@/components/DressCard";
 import Banner from "@/components/Banner";
+import AboutSection from "./AboutSection";
 
 type Collection = {
   collection_id: string;
@@ -27,8 +28,10 @@ export default function HomeClient({
 
       <section>
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-semibold">Featured Collection</h2>
-          <p className="text-sm text-foreground/60">
+          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-foreground">
+            Featured Collection
+          </h2>
+          <p className="mt-1 text-sm text-foreground/60">
             Handmade · Ethically sourced
           </p>
         </div>
@@ -39,6 +42,8 @@ export default function HomeClient({
           ))}
         </div>
       </section>
+
+      <AboutSection />
     </>
   );
 }

@@ -18,7 +18,7 @@ const NavBar: React.FC = () => {
           {/* Logo */}
           <Link
             href="/"
-            className="text-xl font-semibold text-primary tracking-wide"
+            className="text-xl font-semibold tracking-wide text-primary"
           >
             Boutique
           </Link>

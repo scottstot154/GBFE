@@ -24,11 +24,7 @@ export default function Gallery({ images, name }: Props) {
           onMouseLeave={() => setZoom(false)}
           onClick={() => setLightboxOpen(true)}
         >
-          <div
-            className={`absolute inset-0 transition-transform duration-300 ${
-              zoom ? "scale-110" : "scale-100"
-            }`}
-          >
+          <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-card">
             <Image
               src={images[activeIndex]}
               alt={name}

@@ -32,6 +32,15 @@ body,
 #__next {
   height: 100%;
 }
+body {
+  @apply text-sm md:text-base leading-relaxed;
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.01em;
+}
 
 /* Use CSS variables directly for guaranteed rendering, with Tailwind utilities applied if available */
 body {

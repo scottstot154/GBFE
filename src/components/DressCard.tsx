@@ -83,7 +83,7 @@ const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
   }
 
   return (
-    <div className="bg-card border border-[color:var(--border)] rounded-lg shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-card rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300">
       {/* IMAGE CAROUSEL */}
       <div
         className="relative h-56 w-full overflow-hidden rounded-t-lg bg-[color:var(--card)]"
@@ -159,16 +159,16 @@ const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
       </div>
 
       {/* DETAILS */}
-      <div className="p-4">
-        <h3 className="font-semibold text-lg text-foreground">{dress.name}</h3>
+      <div className="p-5">
+        <h3 className="text-base font-medium text-foreground leading-snug">
+          {dress.name}
+        </h3>
 
-        <p className="text-sm text-foreground/70 mt-1">
-          {dress.description || "Beautiful handcrafted dress."}
-        </p>
+        <p className="mt-1 text-sm text-foreground/70">{dress.description}</p>
 
         <div className="mt-4 flex items-center justify-between">
-          <span className="font-bold text-foreground">
-            ₹{dress.cost.toFixed(0)}
+          <span className="text-base font-semibold text-foreground">
+            ₹{dress.cost}
           </span>
 
           <Link href={`/collection/${dress.collection_id}`}>

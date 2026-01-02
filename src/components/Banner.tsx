@@ -21,12 +21,16 @@ const Banner: React.FC<BannerProps> = ({ title, subtitle, imageUrl }) => {
           priority
         />
 
-        <div className="absolute inset-0 bg-black/30 flex items-center">
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent flex items-center">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-white max-w-xl">
-              <h2 className="text-3xl sm:text-4xl font-bold">{title}</h2>
+              <h2 className="text-4xl md:text-5xl font-semibold leading-tight">
+                {title}
+              </h2>
               {subtitle && (
-                <p className="mt-2 text-sm sm:text-base">{subtitle}</p>
+                <p className="mt-4 text-base md:text-lg text-white/90 max-w-md">
+                  {subtitle}
+                </p>
               )}
             </div>
           </div>
