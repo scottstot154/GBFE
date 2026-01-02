@@ -38,42 +38,33 @@ export default async function DressPage({
     <>
       {/* MAIN CONTENT */}
       <main className="max-w-6xl mx-auto px-4 py-16 md:py-24 pb-28 md:pb-16">
-        <div className="grid md:grid-cols-[1.2fr_0.8fr] gap-12 lg:gap-20 items-start">
-          {/* IMAGE GALLERY */}
+        <div className="grid md:grid-cols-[1.1fr_0.9fr] gap-16 items-start">
+          {/* IMAGE */}
           <Gallery images={images} name={dress.name} />
 
           {/* INFO */}
-          <div className="flex flex-col">
-            {/* TITLE */}
-            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
-              {dress.name}
-            </h1>
+          <div className="flex flex-col gap-10">
+            {/* TITLE + PRICE */}
+            <div className="space-y-2">
+              <h1 className="text-3xl md:text-4xl font-medium tracking-tight">
+                {dress.name}
+              </h1>
 
-            {/* PRICE */}
-            <div className="mt-3 text-2xl font-semibold text-foreground">
-              ₹{dress.cost.toFixed(0)}
-              <p className="mt-1 text-xs text-foreground/50">
-                Inclusive of all taxes
-              </p>
+              <div className="text-xl font-medium">
+                ₹{dress.cost.toFixed(0)}
+              </div>
             </div>
 
             {/* DESCRIPTION */}
-            <p className="mt-6 text-sm md:text-base text-foreground/70 leading-relaxed">
+            <p className="max-w-prose text-sm md:text-base leading-relaxed text-foreground/70">
               {dress.description || "Beautiful handcrafted dress."}
             </p>
 
-            {/* DETAILS (SUBTLE VALUE ADD) */}
-            <ul className="mt-6 space-y-2 text-sm text-foreground/60">
-              <li>• Handcrafted design</li>
-              <li>• Ethically sourced materials</li>
-              <li>• Limited production run</li>
-            </ul>
-
-            {/* CTA DIVIDER */}
-            <div className="mt-8 pt-6 border-t border-[color:var(--border)] hidden md:block">
+            {/* CTA */}
+            <div className="pt-4">
               <form action={buyAction}>
-                <GButton size="lg" className="rounded-xl px-10">
-                  Buy Now
+                <GButton size="lg" className="rounded-full px-12 font-medium">
+                  Buy
                 </GButton>
               </form>
             </div>
@@ -82,13 +73,11 @@ export default async function DressPage({
       </main>
 
       {/* MOBILE STICKY CTA */}
-      <div className="fixed bottom-0 left-0 right-0 md:hidden bg-card/95 backdrop-blur border-t border-[color:var(--border)] px-4 py-3 flex items-center justify-between z-40">
-        <span className="text-base font-semibold text-foreground">
-          ₹{dress.cost.toFixed(0)}
-        </span>
+      <div className="fixed bottom-0 inset-x-0 md:hidden bg-background/90 backdrop-blur-sm border-t px-4 py-3 flex items-center justify-between z-40">
+        <span className="text-base font-medium">₹{dress.cost.toFixed(0)}</span>
         <form action={buyAction}>
-          <GButton size="md" className="rounded-lg">
-            Buy Now
+          <GButton size="md" className="rounded-full px-8">
+            Buy
           </GButton>
         </form>
       </div>
