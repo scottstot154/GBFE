@@ -2,15 +2,7 @@ import React, { useState, useRef } from "react";
 import Image from "next/image";
 import GButton from "./GButton";
 import Link from "next/link";
-
-export type Dress = {
-  collection_id: string;
-  name: string;
-  cost: number;
-  image?: string;
-  images?: string[];
-  description?: string;
-};
+import { Dress } from "@/types";
 
 const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
   const images = dress.images?.length
