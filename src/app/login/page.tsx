@@ -1,80 +1,92 @@
 "use client";
 
-import { useRouter } from "next/router";
 import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import GButton from "@/components/GButton";
+import { supabase } from "@/lib/supabaseClient";
+import Link from "next/link";
 
-export default function Login() {
+export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setLoading(true);
 
-    if (!email || !password) {
-      setError("Please enter email and password");
-      return;
-    }
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    const fakeToken = "scaffold-token-123";
-    if (typeof window !== "undefined") {
-      localStorage.setItem("token", fakeToken);
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    } else {
+      router.push(redirectTo);
     }
-    router.push("/");
   }
 
   return (
-    <>
-      <main className="max-w-md mx-auto px-4 py-12">
-        <h1 className="text-2xl font-semibold text-foreground">Login</h1>
-        <p className="text-sm text-foreground/70 mt-1">
-          Sign in to manage your account and orders.
+    <main className="min-h-[70vh] flex items-center justify-center px-4">
+      <div className="w-full max-w-sm">
+        <h1 className="text-2xl font-medium tracking-tight text-center">
+          Sign in
+        </h1>
+
+        <p className="mt-2 text-sm text-foreground/60 text-center">
+          Enter your details to continue
         </p>
 
-        <form
-          onSubmit={handleSubmit}
-          className="mt-6 bg-card p-6 rounded-lg shadow-sm"
-        >
-          {error && <div className="text-sm text-red-600 mb-4">{error}</div>}
+        <form onSubmit={handleLogin} className="mt-10 space-y-6">
+          <input
+            type="email"
+            placeholder="Email"
+            required
+            autoFocus
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full border-b border-[color:var(--border)] bg-transparent py-3 text-sm focus:outline-none focus:border-primary placeholder:text-foreground/40"
+          />
 
-          <label className="block">
-            <span className="text-sm font-medium text-foreground/80">
-              Email
-            </span>
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              type="email"
-              className="mt-1 block w-full rounded-md border border-[color:var(--border)] bg-transparent px-3 py-2 text-foreground shadow-sm focus:ring-primary focus:border-primary"
-              placeholder="you@example.com"
-            />
-          </label>
+          <input
+            type="password"
+            placeholder="Password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full border-b border-[color:var(--border)] bg-transparent py-3 text-sm focus:outline-none focus:border-primary placeholder:text-foreground/40"
+          />
 
-          <label className="block mt-4">
-            <span className="text-sm font-medium text-foreground/80">
-              Password
-            </span>
-            <input
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              type="password"
-              className="mt-1 block w-full rounded-md border border-[color:var(--border)] bg-transparent px-3 py-2 text-foreground shadow-sm focus:ring-primary focus:border-primary"
-              placeholder="••••••••"
-            />
-          </label>
+          {error && <p className="text-sm text-red-600">{error}</p>}
 
-          <div className="mt-6 flex items-center justify-between">
-            <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md">
-              Sign in
-            </button>
-            <a className="text-sm text-primary" href="#">
-              Forgot?
-            </a>
-          </div>
+          <GButton
+            type="submit"
+            size="lg"
+            className="w-full rounded-full"
+            disabled={loading}
+          >
+            {loading ? "Signing in…" : "Sign in"}
+          </GButton>
         </form>
-      </main>
-    </>
+
+        <p className="mt-8 text-xs text-center text-foreground/50">
+          New here?{" "}
+          <Link
+            href={`/signup?redirect=${redirectTo}`}
+            className="underline underline-offset-4"
+          >
+            Create an account
+          </Link>
+        </p>
+      </div>
+    </main>
   );
 }

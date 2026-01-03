@@ -1,62 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React from "react";
+import { useSession } from "@/lib/useSession";
 
-const NavBar: React.FC = () => {
-  const pathname = usePathname();
-
-  const linkBase = "px-3 py-2 rounded-md text-sm font-medium transition-colors";
-
-  const isActive = (path: string) => pathname === path;
+export default function NavBar() {
+  const { session } = useSession();
 
   return (
-    <nav className="bg-card border-b border-[color:var(--border)]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          {/* Logo */}
-          <Link
-            href="/"
-            className="text-xl font-semibold tracking-wide text-primary"
-          >
-            Boutique
-          </Link>
+    <nav className="bg-background border-b border-[color:var(--border)]">
+      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        <Link href="/" className="text-lg font-medium tracking-wide">
+          Boutique
+        </Link>
 
-          {/* Nav Items */}
-          <div className="flex items-center gap-4">
+        <div className="text-sm">
+          {session ? (
             <Link
-              href="/"
-              className={`
-                ${linkBase} 
-                ${
-                  isActive("/")
-                    ? "text-primary"
-                    : "text-foreground/70 hover:text-foreground"
-                }
-              `}
+              href="/account"
+              className="text-foreground/70 hover:text-foreground transition"
             >
-              Home
+              Account
             </Link>
-
+          ) : (
             <Link
               href="/login"
-              className={`
-                ${linkBase}
-                ${
-                  isActive("/login")
-                    ? "text-primary"
-                    : "text-foreground/70 hover:text-foreground"
-                }
-              `}
+              className="text-foreground/70 hover:text-foreground transition"
             >
-              Login
+              Sign in
             </Link>
-          </div>
+          )}
         </div>
       </div>
     </nav>
   );
-};
-
-export default NavBar;
+}
