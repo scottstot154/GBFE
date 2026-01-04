@@ -1,6 +1,7 @@
-import { supabaseServer } from "@/lib/supabaseServer";
+import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import Gallery from "./Gallery";
 import InfoPanel from "./InfoPanel";
+import { supabase } from "@/lib/supabaseClient";
 
 export default async function DressPage({
   params,
@@ -8,6 +9,8 @@ export default async function DressPage({
   params: { id: string };
 }) {
   const { id } = await params;
+
+  const supabaseServer = await createSupabaseServerClient();
 
   const { data: dress } = await supabaseServer
     .from("collections")
@@ -22,6 +25,8 @@ export default async function DressPage({
       </div>
     );
   }
+  const { data } = await supabase.auth.getSession();
+  console.log(data.session); // NOT null
 
   const images: string[] = dress.images?.length
     ? dress.images
