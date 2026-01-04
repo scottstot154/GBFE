@@ -6,10 +6,13 @@ import SizeSelector, { SelectedSize } from "./SizeSelector";
 import { useAddToCartMutation } from "@/store/api/cartApi";
 import { useState } from "react";
 import { Dress } from "@/types";
+import Snackbar from "@/components/Snackbar";
 
 export default function InfoPanel({ dress }: { dress: Dress }) {
   const router = useRouter();
   const [selectedSize, setSelectedSize] = useState<SelectedSize | null>(null);
+
+  const [snackbar, setSnackbar] = useState<string | null>(null);
 
   const [addToCart, { isLoading }] = useAddToCartMutation();
 
@@ -22,8 +25,13 @@ export default function InfoPanel({ dress }: { dress: Dress }) {
       }).unwrap();
 
       router.push("/cart");
-    } catch {
-      alert("Unable to add item to cart");
+    } catch (err) {
+      if (err?.data?.code === "23505") {
+        setSnackbar("Item already in cart");
+        return;
+      }
+
+      setSnackbar("Something went wrong. Please try again.");
     }
   }
 
@@ -51,14 +59,18 @@ export default function InfoPanel({ dress }: { dress: Dress }) {
 
       {/* CTA */}
       <div className="space-y-4">
-        {/* SizeSelector is rendered ABOVE this */}
         <GButton
+          size="lg"
           disabled={!selectedSize || isLoading}
           onClick={handleAddToCart}
           className="w-full"
         >
-          {selectedSize ? `Add ${selectedSize.size} to Cart` : "Select a size"}
+          {isLoading ? "Adding…" : "Add to Cart"}
         </GButton>
+
+        {snackbar && (
+          <Snackbar message={snackbar} onClose={() => setSnackbar(null)} />
+        )}
       </div>
     </div>
   );
