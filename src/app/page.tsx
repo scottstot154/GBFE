@@ -1,4 +1,4 @@
-import { supabaseServer } from "@/lib/supabaseServer";
+import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import HomeClient from "./home/HomeClient";
 
 export const metadata = {
@@ -7,6 +7,7 @@ export const metadata = {
 };
 
 export default async function HomePage() {
+  const supabaseServer = await createSupabaseServerClient();
   const { data: collections, error } = await supabaseServer
     .from("collections")
     .select("*")

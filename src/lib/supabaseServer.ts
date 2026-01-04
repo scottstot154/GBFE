@@ -1,15 +1,32 @@
-// src/lib/supabaseServer.ts
-import { createClient } from "@supabase/supabase-js";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const serviceRole = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+export async function createSupabaseServerClient() {
+  const cookieStore = await cookies();
 
-if (!url || !serviceRole) {
-  throw new Error(
-    "Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY (server only)"
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set(name: string, value: string, options) {
+          try {
+            cookieStore.set({ name, value, ...options });
+          } catch {
+            // In Route Handlers, set can fail silently — this is OK
+          }
+        },
+        remove(name: string, options) {
+          try {
+            cookieStore.set({ name, value: "", ...options });
+          } catch {
+            // Same here
+          }
+        },
+      },
+    }
   );
 }
-
-export const supabaseServer = createClient(url, serviceRole, {
-  auth: { persistSession: false },
-});

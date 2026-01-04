@@ -16,3 +16,17 @@ export type Dress = {
   description?: string;
   sizes?: SizesMap | null;
 };
+
+export type CartItem = {
+  id: string;
+  user_id: string;
+  item_id: string;
+  collection_id: string;
+  name: string;
+  size: string;
+  image: string;
+  price: string;
+  quantity: number;
+  created_at: string;
+  updated_at: string;
+};
