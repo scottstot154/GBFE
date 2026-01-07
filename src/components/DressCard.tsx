@@ -3,6 +3,7 @@ import Image from "next/image";
 import GButton from "./GButton";
 import Link from "next/link";
 import { Dress } from "@/types";
+import { Icons } from "./Icons";
 
 const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
   const images = dress.images?.length
@@ -120,7 +121,7 @@ const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
                 bg-black/20 backdrop-blur px-2 py-1 rounded-full text-white text-xs 
                 hover:bg-black/30 transition"
             >
-              ‹
+              <Icons.chevronLeft className="w-4 h-4" />
             </button>
 
             <button
@@ -129,7 +130,7 @@ const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
                 bg-black/20 backdrop-blur px-2 py-1 rounded-full text-white text-xs 
                 hover:bg-black/30 transition"
             >
-              ›
+              <Icons.chevronRight className="w-4 h-4" />
             </button>
           </>
         )}
