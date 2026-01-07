@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useGetCartQuery } from "@/store/api/cartApi";
+import { Icons } from "./Icons";
 
 export default function NavBar() {
   const pathname = usePathname();
@@ -52,7 +53,8 @@ export default function NavBar() {
           {/* CART — only when logged in */}
           {isLoggedIn && (
             <Link href="/cart" className="relative flex items-center gap-1">
-              Cart
+              <Icons.cart className="w-5 h-5" />
+              <span>Cart</span>
               {itemCount > 0 && (
                 <span className="ml-1 inline-flex items-center justify-center text-xs font-medium rounded-full bg-primary text-primary-foreground w-5 h-5">
                   {itemCount}
@@ -65,11 +67,12 @@ export default function NavBar() {
             href={isLoggedIn ? "/account" : "/login"}
             className={
               pathname === "/account" || pathname === "/login"
-                ? "font-medium"
-                : "text-foreground/70"
+                ? "font-medium flex items-center gap-1"
+                : "text-foreground/70 flex items-center gap-1"
             }
           >
-            {isLoggedIn ? "Account" : "Login"}
+            <Icons.user className="w-5 h-5" />
+            <span>{isLoggedIn ? "Account" : "Login"}</span>
           </Link>
         </div>
       </div>

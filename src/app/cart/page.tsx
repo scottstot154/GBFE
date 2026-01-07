@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import GButton from "@/components/GButton";
 import { formatPrice } from "@/lib/formatPrice";
+import { Icons } from "@/components/Icons";
 
 export default function CartPage() {
   const router = useRouter();
@@ -93,10 +94,11 @@ export default function CartPage() {
 
                   <button
                     disabled={removing}
-                    className="text-sm text-foreground/50 hover:text-red-600"
+                    className="flex items-center gap-1 text-sm text-foreground/50 hover:text-red-600"
                     onClick={() => removeItem({ item_id: item.item_id })}
                   >
-                    Remove
+                    <Icons.trash className="inline w-4 h-4 mr-1" />
+                    <span>Remove</span>
                   </button>
                 </div>
               </div>

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import GButton from "@/components/GButton";
 import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
+import { Icons } from "@/components/Icons";
 
 export default function LoginPage() {
   const router = useRouter();
