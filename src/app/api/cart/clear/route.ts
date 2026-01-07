@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
 
-export async function GET() {
+export async function DELETE() {
   const supabase = await createSupabaseServerClient();
 
   const {
@@ -12,15 +12,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data, error } = await supabase
-    .from("carts")
-    .select("items, total_price")
-    .eq("user_id", user.id)
-    .single();
+  await supabase.from("cart_items").delete().eq("user_id", user.id);
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
-  }
-
-  return NextResponse.json(data);
+  return NextResponse.json({ success: true });
 }

@@ -60,20 +60,17 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { cart_item_id } = await req.json();
+  const { item_id } = await req.json();
 
-  if (!cart_item_id) {
-    return NextResponse.json(
-      { error: "cart_item_id required" },
-      { status: 400 }
-    );
+  if (!item_id) {
+    return NextResponse.json({ error: "item_id required" }, { status: 400 });
   }
 
   const { error } = await supabase
     .from("cart_items")
     .delete()
-    .eq("id", cart_item_id)
-    .eq("user_id", user.id);
+    .eq("user_id", user.id)
+    .eq("item_id", item_id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });

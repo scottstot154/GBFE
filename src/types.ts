@@ -30,3 +30,8 @@ export type CartItem = {
   created_at: string;
   updated_at: string;
 };
+
+export type CartResponse = {
+  items: CartItem[]; // parsed JSON
+  total_price: string; // BIGINT
+};

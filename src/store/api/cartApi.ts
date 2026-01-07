@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { CartItem } from "@/types";
+import { CartItem, CartResponse } from "@/types";
 
 export const cartApi = createApi({
   reducerPath: "cartApi",
@@ -13,8 +13,14 @@ export const cartApi = createApi({
 
   endpoints: (builder) => ({
     // GET /api/cart
-    getCart: builder.query<{ items: CartItem[] }, void>({
+    getCart: builder.query<{ items: CartItem[]; total_price: string }, void>({
       query: () => "/cart",
+      transformResponse: (response: CartResponse) => ({
+        items: Array.isArray(response.items)
+          ? response.items
+          : JSON.parse(response.items),
+        total_price: response.total_price,
+      }),
       providesTags: ["Cart"],
     }),
 
@@ -42,14 +48,19 @@ export const cartApi = createApi({
     }),
 
     // DELETE /api/cart/items/:id
-    removeCartItem: builder.mutation<
-      { success: true },
-      { cart_item_id: string }
-    >({
-      query: ({ cart_item_id }) => ({
-        url: `/cart/items`,
+    removeCartItem: builder.mutation<{ success: true }, { item_id: string }>({
+      query: ({ item_id }) => ({
+        url: "/cart/items",
         method: "DELETE",
-        body: { cart_item_id },
+        body: { item_id },
+      }),
+      invalidatesTags: ["Cart"],
+    }),
+
+    clearCart: builder.mutation<{ success: true }, void>({
+      query: () => ({
+        url: "/cart/clear",
+        method: "DELETE",
       }),
       invalidatesTags: ["Cart"],
     }),
@@ -61,4 +72,5 @@ export const {
   useAddToCartMutation,
   useUpdateCartItemMutation,
   useRemoveCartItemMutation,
+  useClearCartMutation,
 } = cartApi;

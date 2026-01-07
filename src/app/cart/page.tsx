@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   useGetCartQuery,
   useRemoveCartItemMutation,
+  useClearCartMutation,
 } from "@/store/api/cartApi";
 import Image from "next/image";
 import GButton from "@/components/GButton";
@@ -26,11 +27,13 @@ export default function CartPage() {
     });
   }, [router]);
 
-  const { data, isLoading } = useGetCartQuery(undefined, {
+  const { data, isLoading, isFetching } = useGetCartQuery(undefined, {
     skip: !isLoggedIn,
   });
 
-  const [removeItem, { isLoading: isRemoving }] = useRemoveCartItemMutation();
+  const [removeItem, { isLoading: removing }] = useRemoveCartItemMutation();
+
+  const [clearCart, { isLoading: clearing }] = useClearCartMutation();
 
   if (isLoggedIn === null) {
     return (
@@ -40,11 +43,11 @@ export default function CartPage() {
     );
   }
 
-  if (isLoading || !data) {
+  if (isLoading || isFetching) {
     return <div className="max-w-4xl mx-auto px-4 py-20">Loading cart…</div>;
   }
 
-  if (data.items.length === 0) {
+  if (!data || data.items.length === 0) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-24 text-center space-y-4">
         <h1 className="text-2xl font-medium">Your cart is empty</h1>
@@ -56,49 +59,42 @@ export default function CartPage() {
     );
   }
 
-  const total = data.items.reduce(
-    (sum, item) => sum + BigInt(item.price) * BigInt(item.quantity),
-    BigInt(0)
-  );
-
   return (
     <main className="max-w-5xl mx-auto px-4 py-16 grid gap-12 md:grid-cols-[1.4fr_0.6fr]">
-      {/* LEFT — CART ITEMS */}
+      {/* LEFT — ITEMS */}
       <section className="space-y-6">
         <h1 className="text-2xl font-medium tracking-tight">Shopping Cart</h1>
 
         <div className="space-y-4">
           {data.items.map((item) => (
             <div
-              key={item.id}
-              className="flex gap-4 p-4 rounded-xl border bg-card"
+              key={item.item_id}
+              className="flex gap-4 p-4 border rounded-xl bg-card"
             >
-              {/* IMAGE */}
-              <div className="relative w-24 h-32 rounded-lg overflow-hidden bg-muted">
+              <div className="relative w-24 h-32 rounded-lg overflow-hidden">
                 <Image
-                  src={item.image || "/dress-placeholder.png"}
+                  src={item.image}
                   alt={item.name}
                   fill
                   className="object-cover"
                 />
               </div>
 
-              {/* INFO */}
               <div className="flex-1 flex flex-col justify-between">
                 <div>
                   <h3 className="font-medium">{item.name}</h3>
-                  <p className="text-sm text-foreground/60 mt-1">
+                  <p className="text-sm text-foreground/60">
                     Size: {item.size}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between mt-3">
+                <div className="flex items-center justify-between">
                   <span className="font-medium">{formatPrice(item.price)}</span>
 
                   <button
-                    onClick={() => removeItem({ cart_item_id: item.id })}
-                    disabled={isRemoving}
-                    className="text-sm text-foreground/50 hover:text-red-600 transition-colors"
+                    disabled={removing}
+                    className="text-sm text-foreground/50 hover:text-red-600"
+                    onClick={() => removeItem({ item_id: item.item_id })}
                   >
                     Remove
                   </button>
@@ -110,26 +106,30 @@ export default function CartPage() {
       </section>
 
       {/* RIGHT — SUMMARY */}
-      <aside className="sticky top-24 h-fit rounded-xl border bg-card p-6 space-y-6">
+      <aside className="sticky top-24 h-fit border rounded-xl bg-card p-6 space-y-6">
         <h2 className="text-lg font-medium">Order Summary</h2>
 
-        <div className="flex justify-between text-sm text-foreground/70">
+        <div className="flex justify-between text-sm">
           <span>Items</span>
           <span>{data.items.length}</span>
         </div>
 
         <div className="flex justify-between font-medium text-base">
           <span>Total</span>
-          <span>{formatPrice(String(total))}</span>
+          <span>{formatPrice(data.total_price)}</span>
         </div>
 
         <GButton size="lg" className="w-full rounded-full">
           Checkout
         </GButton>
 
-        <p className="text-xs text-foreground/50 text-center">
-          Shipping & taxes calculated at checkout
-        </p>
+        <GButton
+          variant="outline"
+          disabled={clearing}
+          onClick={() => clearCart()}
+        >
+          {clearing ? "Removing…" : "Remove all"}
+        </GButton>
       </aside>
     </main>
   );
