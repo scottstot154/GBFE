@@ -1,5 +1,15 @@
-export function formatPrice(value: string | number) {
-  const amount = typeof value === "string" ? BigInt(value) : BigInt(value);
+/**
+ * Accepts BIGINT price in paise (string | number | bigint)
+ * Returns formatted INR string in rupees
+ */
+export function formatPrice(value: string | number | bigint) {
+  const paise = typeof value === "bigint" ? value : BigInt(value);
 
-  return `₹${amount.toLocaleString("en-IN")}`;
+  const rupees = Number(paise) / 100;
+
+  return rupees.toLocaleString("en-IN", {
+    style: "currency",
+    currency: "INR",
+    minimumFractionDigits: 2,
+  });
 }
