@@ -10,9 +10,11 @@ import {
   Heart,
   CheckCircle,
   AlertCircle,
+  Plus,
 } from "lucide-react";
 
 export const Icons = {
+  plus: Plus,
   cart: ShoppingBag,
   trash: Trash2,
   user: User,

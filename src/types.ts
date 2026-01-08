@@ -35,3 +35,17 @@ export type CartResponse = {
   items: CartItem[]; // parsed JSON
   total_price: string; // BIGINT
 };
+
+export type Address = {
+  id: string;
+  user_id: string;
+  label: string; // "Home", "Office"
+  name: string;
+  phone: string;
+  line1: string;
+  city: string;
+  state: string;
+  postal_code: string;
+  is_default: boolean;
+  created_at: string;
+};

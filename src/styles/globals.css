@@ -70,3 +70,7 @@ body {
 .text-accent-foreground {
   color: hsl(var(--accent-foreground));
 }
+
+.input {
+  @apply w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary;
+}
