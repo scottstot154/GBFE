@@ -121,7 +121,11 @@ export default function CartPage() {
           <span>{formatPrice(data.total_price)}</span>
         </div>
 
-        <GButton size="lg" className="w-full rounded-full">
+        <GButton
+          size="lg"
+          className="w-full rounded-full"
+          onClick={() => router.push("/checkout")}
+        >
           Checkout
         </GButton>
 
