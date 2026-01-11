@@ -12,6 +12,8 @@ import {
   AlertCircle,
   Plus,
   List,
+  ArrowLeft,
+  ArrowRight,
 } from "lucide-react";
 
 export const Icons = {
@@ -28,4 +30,6 @@ export const Icons = {
   success: CheckCircle,
   error: AlertCircle,
   list: List,
+  arrowLeft: ArrowLeft,
+  arrowRight: ArrowRight,
 };
