@@ -1,11 +1,13 @@
 import "@/styles/globals.css";
+import type { Metadata } from "next";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
+import { Toaster } from "react-hot-toast";
 import { Providers } from "./providers";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Boutique",
-  description: "Handcrafted dresses",
+  description: "Handcrafted collections",
 };
 
 export default function RootLayout({
@@ -15,13 +17,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-background text-foreground">
+      <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
         <Providers>
-          <div className="min-h-screen flex flex-col">
-            <NavBar />
-            <main className="flex-1 py-12 md:py-16">{children}</main>
-            <Footer />
-          </div>
+          {/* Global UI */}
+          <NavBar />
+
+          {/* Page content */}
+          <main className="flex-1">{children}</main>
+
+          <Footer />
+
+          {/* Toasts */}
+          <Toaster position="bottom-center" />
         </Providers>
       </body>
     </html>

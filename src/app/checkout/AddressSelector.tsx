@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import GButton from "@/components/GButton";
 import { Icons } from "@/components/Icons";
+import { toast } from "react-hot-toast";
+import { createCheckout } from "./actions";
 import { Address } from "@/types";
 
 export default function AddressSelector({
@@ -12,13 +15,28 @@ export default function AddressSelector({
   addresses: Address[];
   onAddNew: () => void;
 }) {
+  const router = useRouter();
+
   const defaultAddress =
     addresses.find((a) => a.is_default)?.id ?? addresses[0].id;
 
   const [selectedId, setSelectedId] = useState<string>(defaultAddress);
 
-  function handleContinue() {
-    console.log("Selected address:", selectedId);
+  const [loading, setLoading] = useState(false);
+
+  async function handleContinue() {
+    console.log("Selected address ID:", selectedId);
+    setLoading(true);
+    try {
+      const { checkout_id } = await createCheckout(selectedId);
+      router.push(`/checkout/payment?checkout=${checkout_id}`);
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "An unexpected error occurred";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -71,8 +89,13 @@ export default function AddressSelector({
         ))}
       </div>
 
-      <GButton size="lg" className="rounded-full" onClick={handleContinue}>
-        Continue
+      <GButton
+        size="lg"
+        className="rounded-full"
+        onClick={handleContinue}
+        disabled={loading}
+      >
+        {loading ? "Preparing checkout…" : "Continue"}
       </GButton>
     </main>
   );
