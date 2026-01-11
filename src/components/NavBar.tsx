@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useGetCartQuery } from "@/store/api/cartApi";
@@ -9,9 +9,11 @@ import { Icons } from "./Icons";
 
 export default function NavBar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [openAccount, setOpenAccount] = useState(false);
 
-  // Check auth state once
+  // 🔐 Auth state
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setIsLoggedIn(!!data.session);
@@ -21,17 +23,23 @@ export default function NavBar() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session);
+      setOpenAccount(false);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  // Only fetch cart if logged in
+  // 🛒 Cart (only when logged in)
   const { data } = useGetCartQuery(undefined, {
     skip: !isLoggedIn,
   });
 
   const itemCount = data?.items?.length ?? 0;
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.push("/");
+  }
 
   return (
     <nav className="border-b bg-background">
@@ -41,8 +49,8 @@ export default function NavBar() {
           Boutique
         </Link>
 
-        {/* Links */}
-        <div className="flex items-center gap-6">
+        {/* Right */}
+        <div className="flex items-center gap-6 relative">
           <Link
             href="/"
             className={pathname === "/" ? "font-medium" : "text-foreground/70"}
@@ -50,7 +58,7 @@ export default function NavBar() {
             Home
           </Link>
 
-          {/* CART — only when logged in */}
+          {/* CART */}
           {isLoggedIn && (
             <Link href="/cart" className="relative flex items-center gap-1">
               <Icons.cart className="w-5 h-5" />
@@ -63,17 +71,51 @@ export default function NavBar() {
             </Link>
           )}
 
-          <Link
-            href={isLoggedIn ? "/account" : "/login"}
-            className={
-              pathname === "/account" || pathname === "/login"
-                ? "font-medium flex items-center gap-1"
-                : "text-foreground/70 flex items-center gap-1"
-            }
-          >
-            <Icons.user className="w-5 h-5" />
-            <span>{isLoggedIn ? "Account" : "Login"}</span>
-          </Link>
+          {/* ACCOUNT */}
+          {isLoggedIn ? (
+            <div className="relative">
+              <button
+                onClick={() => setOpenAccount((v) => !v)}
+                className="flex items-center gap-1 text-foreground/70 hover:text-foreground"
+              >
+                <Icons.user className="w-5 h-5" />
+                <span>Account</span>
+              </button>
+
+              {openAccount && (
+                <div className="absolute right-0 top-10 w-40 rounded-xl border bg-card shadow-sm overflow-hidden z-50">
+                  <Link
+                    href="/orders"
+                    onClick={() => setOpenAccount(false)}
+                    className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted"
+                  >
+                    <Icons.list className="w-4 h-4" />
+                    My Orders
+                  </Link>
+
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted text-left"
+                  >
+                    <Icons.logout className="w-4 h-4" />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className={
+                pathname === "/login"
+                  ? "font-medium flex items-center gap-1"
+                  : "text-foreground/70 flex items-center gap-1"
+              }
+            >
+              <Icons.login className="w-5 h-5" />
+              <span>Login</span>
+            </Link>
+          )}
         </div>
       </div>
     </nav>

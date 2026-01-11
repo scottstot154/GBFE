@@ -15,7 +15,9 @@ export default function PaymentPage() {
 
     try {
       const orderId = await finalizeCheckout(checkoutId);
-      router.push(`/orders/${orderId}`);
+
+      // ✅ Redirect to orders page
+      router.push("/orders");
     } catch (err: unknown) {
       if (err instanceof Error) {
         toast.error(err.message);
@@ -28,6 +30,8 @@ export default function PaymentPage() {
   return (
     <div className="max-w-md mx-auto py-20 text-center space-y-6">
       <h1 className="text-2xl font-medium">Payment</h1>
+
+      <p className="text-foreground/60">This is a mock payment screen.</p>
 
       <GButton size="lg" onClick={handlePaymentSuccess}>
         Mock payment success
