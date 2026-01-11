@@ -11,6 +11,7 @@ import {
   CheckCircle,
   AlertCircle,
   Plus,
+  List,
 } from "lucide-react";
 
 export const Icons = {
@@ -26,4 +27,5 @@ export const Icons = {
   wishlist: Heart,
   success: CheckCircle,
   error: AlertCircle,
+  list: List,
 };
