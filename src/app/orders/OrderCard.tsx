@@ -1,8 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { formatPrice } from "@/lib/formatPrice";
+import { Order, OrderItem } from "@/types";
 
-export default function OrderCard({ order }: { order: any }) {
+export default function OrderCard({ order }: { order: Order }) {
+  console.log(order);
   return (
     <Link href={`/orders/${order.id}`}>
       <div className="border rounded-xl bg-card p-4 space-y-4 hover:border-primary transition cursor-pointer">
@@ -22,7 +24,7 @@ export default function OrderCard({ order }: { order: any }) {
 
         {/* Preview items */}
         <div className="flex gap-3">
-          {order.order_items.slice(0, 3).map((item: any, idx: number) => (
+          {order.order_items.slice(0, 3).map((item: OrderItem, idx: number) => (
             <div
               key={idx}
               className="relative w-12 h-16 rounded overflow-hidden"
