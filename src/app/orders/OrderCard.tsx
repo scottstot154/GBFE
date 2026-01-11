@@ -4,7 +4,6 @@ import { formatPrice } from "@/lib/formatPrice";
 import { Order, OrderItem } from "@/types";
 
 export default function OrderCard({ order }: { order: Order }) {
-  console.log(order);
   return (
     <Link href={`/orders/${order.id}`}>
       <div className="border rounded-xl bg-card p-4 space-y-4 hover:border-primary transition cursor-pointer">
