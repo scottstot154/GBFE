@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import OrderCard from "./OrderCard";
+import { Order } from "@/types";
 
 export default async function OrdersPage() {
   const supabase = await createSupabaseServerClient();
@@ -30,7 +31,8 @@ export default async function OrdersPage() {
       `
     )
     .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .returns<Order[]>();
 
   if (error) {
     return (
