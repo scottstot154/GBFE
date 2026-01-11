@@ -2,6 +2,7 @@ import { redirect, notFound } from "next/navigation";
 import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import { formatPrice } from "@/lib/formatPrice";
+import BackButton from "@/components/navigation/BackButton";
 
 export default async function OrderDetailsPage({
   params,
@@ -71,6 +72,8 @@ export default async function OrderDetailsPage({
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-16 space-y-10">
+      <BackButton fallback="/orders" />
+
       {/* HEADER */}
       <header className="space-y-2">
         <h1 className="text-2xl font-medium">Order #{order.id.slice(0, 8)}</h1>
