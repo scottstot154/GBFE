@@ -1,17 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useGetCartQuery } from "@/store/api/cartApi";
 import { Icons } from "./Icons";
+import AccountDrawer from "@/components/drawer/AccountDrawer";
 
 export default function NavBar() {
   const pathname = usePathname();
-  const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [openAccount, setOpenAccount] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState(false);
 
   // 🔐 Auth state
   useEffect(() => {
@@ -35,11 +36,6 @@ export default function NavBar() {
   });
 
   const itemCount = data?.items?.length ?? 0;
-
-  async function handleLogout() {
-    await supabase.auth.signOut();
-    router.push("/");
-  }
 
   return (
     <nav className="border-b bg-background">
@@ -72,48 +68,29 @@ export default function NavBar() {
           )}
 
           {/* ACCOUNT */}
-          {isLoggedIn ? (
-            <div className="relative">
+          {isLoggedIn && (
+            <>
               <button
-                onClick={() => setOpenAccount((v) => !v)}
+                onClick={() => setOpenDrawer(true)}
                 className="flex items-center gap-1 text-foreground/70 hover:text-foreground"
               >
                 <Icons.user className="w-5 h-5" />
-                <span>Account</span>
+                Account
               </button>
 
-              {openAccount && (
-                <div className="absolute right-0 top-10 w-40 rounded-xl border bg-card shadow-sm overflow-hidden z-50">
-                  <Link
-                    href="/orders"
-                    onClick={() => setOpenAccount(false)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted"
-                  >
-                    <Icons.list className="w-4 h-4" />
-                    My Orders
-                  </Link>
+              <AccountDrawer
+                open={openDrawer}
+                onClose={() => setOpenDrawer(false)}
+              />
+            </>
+          )}
 
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted text-left"
-                  >
-                    <Icons.logout className="w-4 h-4" />
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
+          {!isLoggedIn && (
             <Link
-              href="/login"
-              className={
-                pathname === "/login"
-                  ? "font-medium flex items-center gap-1"
-                  : "text-foreground/70 flex items-center gap-1"
-              }
+              href="/signup"
+              className="px-4 py-1.5 rounded-full bg-primary text-primary-foreground text-sm font-medium"
             >
-              <Icons.login className="w-5 h-5" />
-              <span>Login</span>
+              Sign up
             </Link>
           )}
         </div>

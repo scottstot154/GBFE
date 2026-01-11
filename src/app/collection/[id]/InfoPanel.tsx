@@ -4,9 +4,10 @@ import { useRouter } from "next/navigation";
 import GButton from "@/components/GButton";
 import SizeSelector, { SelectedSize } from "./SizeSelector";
 import { useAddToCartMutation } from "@/store/api/cartApi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dress } from "@/types";
 import Snackbar from "@/components/Snackbar";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function InfoPanel({ dress }: { dress: Dress }) {
   const router = useRouter();
@@ -16,7 +17,28 @@ export default function InfoPanel({ dress }: { dress: Dress }) {
 
   const [addToCart, { isLoading }] = useAddToCartMutation();
 
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setIsLoggedIn(!!data.session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   async function handleAddToCart() {
+    if (!isLoggedIn) {
+      router.push(`/login?redirect=/dress/${dress.collection_id}`);
+      return;
+    }
+
     if (!selectedSize) return;
 
     try {
@@ -67,6 +89,12 @@ export default function InfoPanel({ dress }: { dress: Dress }) {
         >
           {isLoading ? "Adding…" : "Add to Cart"}
         </GButton>
+
+        {!isLoggedIn && (
+          <p className="text-sm text-foreground/60">
+            Please log in to add items to your cart.
+          </p>
+        )}
 
         {snackbar && (
           <Snackbar message={snackbar} onClose={() => setSnackbar(null)} />
