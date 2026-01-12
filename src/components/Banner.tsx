@@ -2,35 +2,58 @@ import React from "react";
 import Image from "next/image";
 
 type BannerProps = {
-  title: string;
+  title?: string;
   subtitle?: string;
   imageUrl?: string;
+  ctaLabel?: string;
+  onCtaClick?: () => void;
 };
 
-const Banner: React.FC<BannerProps> = ({ title, subtitle, imageUrl }) => {
+const Banner: React.FC<BannerProps> = ({
+  title = "New Arrivals",
+  subtitle,
+  imageUrl,
+  ctaLabel,
+  onCtaClick,
+}) => {
   return (
-    <section className="relative overflow-hidden rounded-lg shadow-sm">
-      {/* parent must have a height so Image(fill) can size correctly */}
-      <div className="relative w-full h-56 sm:h-72 md:h-96 lg:h-[520px]">
+    <section className="relative overflow-hidden rounded-xl bg-muted">
+      {/* Fixed-height container for Image(fill) */}
+      <div className="relative w-full h-64 sm:h-80 md:h-[420px] lg:h-[520px]">
+        {/* IMAGE */}
         <Image
           src={imageUrl || "/images/banner-placeholder.jpg"}
           alt={title}
           fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 100vw"
           priority
+          sizes="100vw"
+          className="object-cover"
         />
 
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent flex items-center">
-          <div className="max-w-6xl mx-auto px-4">
-            <div className="text-white max-w-xl">
-              <h2 className="text-4xl md:text-5xl font-semibold leading-tight">
+        {/* OVERLAY */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/35 to-black/10">
+          <div className="h-full max-w-6xl mx-auto px-4 flex items-center">
+            <div className="max-w-xl text-white space-y-5">
+              {/* TITLE */}
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold leading-tight tracking-tight">
                 {title}
-              </h2>
+              </h1>
+
+              {/* SUBTITLE */}
               {subtitle && (
-                <p className="mt-4 text-base md:text-lg text-white/90 max-w-md">
+                <p className="text-base sm:text-lg text-white/90 leading-relaxed">
                   {subtitle}
                 </p>
+              )}
+
+              {/* CTA (optional, CMS-ready) */}
+              {ctaLabel && onCtaClick && (
+                <button
+                  onClick={onCtaClick}
+                  className="inline-flex items-center rounded-full bg-white text-black px-6 py-2.5 text-sm font-medium hover:bg-white/90 transition"
+                >
+                  {ctaLabel}
+                </button>
               )}
             </div>
           </div>
