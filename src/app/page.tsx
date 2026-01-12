@@ -1,5 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import HomeClient from "./home/HomeClient";
+import { HOME_BANNER_DEFAULT, HOME_ABOUT_DEFAULT } from "@/config/homeDefaults";
+import { getCmsPageServer } from "@/lib/cmsServer";
 
 export const metadata = {
   title: "Boutique - Home",
@@ -8,18 +10,33 @@ export const metadata = {
 
 export default async function HomePage() {
   const supabaseServer = await createSupabaseServerClient();
+
+  // 🔹 Fetch collections (core commerce data)
   const { data: collections, error } = await supabaseServer
     .from("collections")
     .select("*")
     .order("created_at", { ascending: false });
 
   if (error) {
-    return <div className="p-6">Failed to load collections.</div>;
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-20 text-foreground/60">
+        Failed to load collections.
+      </div>
+    );
   }
+
+  // 🔹 Fetch CMS content (non-critical)
+  const banner = await getCmsPageServer("home-banner", HOME_BANNER_DEFAULT);
+
+  const about = await getCmsPageServer("home-about", HOME_ABOUT_DEFAULT);
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-12 space-y-14">
-      <HomeClient collections={collections ?? []} />
+      <HomeClient
+        collections={collections ?? []}
+        banner={banner}
+        about={about}
+      />
     </main>
   );
 }

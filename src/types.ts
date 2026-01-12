@@ -1,3 +1,12 @@
+export type Collection = {
+  collection_id: string;
+  name: string;
+  cost: number;
+  image?: string;
+  images?: string[];
+  description?: string;
+};
+
 export type SizeInventoryItem = {
   status: "available" | "unavailable";
   item_id: string;

@@ -1,49 +1,50 @@
 "use client";
 
-import DressCard from "@/components/DressCard";
 import Banner from "@/components/Banner";
+import DressCard from "@/components/DressCard";
+import { Collection } from "@/types";
 import AboutSection from "./AboutSection";
 
-type Collection = {
-  collection_id: string;
-  name: string;
-  cost: number;
-  image?: string;
-  images?: string[];
-  description?: string;
+type CmsBlock = {
+  title?: string;
+  subtitle?: string;
+  content?: {
+    paragraphs?: string[];
+  };
+  image_url?: string;
 };
 
 export default function HomeClient({
   collections,
+  banner,
+  about,
 }: {
   collections: Collection[];
+  banner: CmsBlock;
+  about: CmsBlock;
 }) {
   return (
     <>
+      {/* HERO */}
       <Banner
-        title="Summer Collection — Light & Breezy"
-        subtitle="Handpicked pieces for the sunny season. Limited stocks available."
-        imageUrl="/images/banner-summer.jpg"
+        title={banner.title}
+        subtitle={banner.subtitle}
+        imageUrl={banner.image_url}
       />
 
-      <section>
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-foreground">
-            Featured Collection
-          </h2>
-          <p className="mt-1 text-sm text-foreground/60">
-            Handmade · Ethically sourced
-          </p>
-        </div>
+      {/* COLLECTIONS */}
+      <section className="space-y-6">
+        <h2 className="text-2xl font-medium">Featured Collection</h2>
 
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {collections.map((d) => (
-            <DressCard key={d.collection_id} dress={d} />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {collections.map((dress) => (
+            <DressCard key={dress.collection_id} dress={dress} />
           ))}
         </div>
       </section>
 
-      <AboutSection />
+      {/* ABOUT */}
+      <AboutSection about={about} />
     </>
   );
 }

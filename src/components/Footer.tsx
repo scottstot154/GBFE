@@ -1,111 +1,113 @@
 import Link from "next/link";
 import React from "react";
+import { footerConfig } from "@/config/footer";
+import { SiInstagram, SiPinterest } from "react-icons/si";
 
 const Footer: React.FC = () => {
+  const { brand, shopLinks, supportLinks, socialLinks, legalLinks } =
+    footerConfig;
+
   return (
     <footer className="bg-card border-t border-[color:var(--border)] mt-16">
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-          {/* Brand */}
+          {/* BRAND */}
           <div>
-            <h3 className="text-lg font-semibold text-foreground">Boutique</h3>
+            <h3 className="text-lg font-semibold text-foreground">
+              {brand.name}
+            </h3>
             <p className="mt-2 text-sm text-foreground/70 leading-relaxed">
-              Handcrafted, ethically sourced dresses designed for comfort,
-              elegance, and everyday beauty.
+              {brand.description}
             </p>
           </div>
 
-          {/* Shop */}
+          {/* SHOP */}
           <div>
-            <h4 className="text-sm font-semibold text-foreground uppercase tracking-wide">
+            <h4 className="text-sm font-semibold uppercase tracking-wide">
               Shop
             </h4>
             <ul className="mt-3 space-y-2 text-sm">
-              <li>
-                <Link
-                  href="/"
-                  className="text-foreground/70 hover:text-foreground transition"
-                >
-                  New Arrivals
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/"
-                  className="text-foreground/70 hover:text-foreground transition"
-                >
-                  Collections
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/"
-                  className="text-foreground/70 hover:text-foreground transition"
-                >
-                  Best Sellers
-                </Link>
-              </li>
+              {shopLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-foreground/70 hover:text-foreground transition"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Support */}
+          {/* SUPPORT */}
           <div>
-            <h4 className="text-sm font-semibold text-foreground uppercase tracking-wide">
+            <h4 className="text-sm font-semibold uppercase tracking-wide">
               Support
             </h4>
             <ul className="mt-3 space-y-2 text-sm">
-              <li>
-                <Link
-                  href="/"
-                  className="text-foreground/70 hover:text-foreground transition"
-                >
-                  Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/"
-                  className="text-foreground/70 hover:text-foreground transition"
-                >
-                  Shipping & Returns
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/"
-                  className="text-foreground/70 hover:text-foreground transition"
-                >
-                  Size Guide
-                </Link>
-              </li>
+              {supportLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-foreground/70 hover:text-foreground transition"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Social */}
+          {/* SOCIAL */}
           <div>
-            <h4 className="text-sm font-semibold text-foreground uppercase tracking-wide">
+            <h4 className="text-sm font-semibold uppercase tracking-wide">
               Follow Us
             </h4>
-            <ul className="mt-3 space-y-2 text-sm">
-              <li className="text-foreground/70">Instagram</li>
-              <li className="text-foreground/70">Facebook</li>
-              <li className="text-foreground/70">Pinterest</li>
-            </ul>
+            <div className="mt-3 flex gap-4">
+              {socialLinks.instagram && (
+                <a
+                  href={socialLinks.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                  className="text-foreground/70 hover:text-primary transition"
+                >
+                  <SiInstagram className="w-5 h-5" />
+                </a>
+              )}
+
+              {socialLinks.pinterest && (
+                <a
+                  href={socialLinks.pinterest}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Pinterest"
+                  className="text-foreground/70 hover:text-primary transition"
+                >
+                  <SiPinterest className="w-5 h-5" />
+                </a>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Bottom bar */}
+        {/* BOTTOM BAR */}
         <div className="mt-10 pt-6 border-t border-[color:var(--border)] text-sm text-foreground/60 flex flex-col sm:flex-row justify-between gap-4">
           <span>
-            © {new Date().getFullYear()} Boutique. All rights reserved.
+            © {new Date().getFullYear()} {brand.name}. All rights reserved.
           </span>
+
           <div className="flex gap-4">
-            <Link href="/" className="hover:text-foreground transition">
-              Privacy
-            </Link>
-            <Link href="/" className="hover:text-foreground transition">
-              Terms
-            </Link>
+            {legalLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="hover:text-foreground transition"
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
         </div>
       </div>
