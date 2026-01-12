@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import OrderCard from "./OrderCard";
 import { Order } from "@/types";
+import BackButton from "@/components/navigation/BackButton";
 
 export default async function OrdersPage() {
   const supabase = await createSupabaseServerClient();
@@ -55,6 +56,9 @@ export default async function OrdersPage() {
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-16 space-y-6">
+      <div className="mb-4">
+        <BackButton fallback="/" label="Back to Home" />
+      </div>
       <h1 className="text-2xl font-medium tracking-tight">My Orders</h1>
 
       <div className="space-y-4">

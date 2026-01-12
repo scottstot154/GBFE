@@ -2,6 +2,7 @@ import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import Gallery from "./Gallery";
 import InfoPanel from "./InfoPanel";
 import { supabase } from "@/lib/supabaseClient";
+import BackButton from "@/components/navigation/BackButton";
 
 export default async function DressPage({
   params,
@@ -37,6 +38,10 @@ export default async function DressPage({
   return (
     <>
       <main className="max-w-6xl mx-auto px-4 py-16 md:py-24 pb-28 md:pb-16">
+        <div className="mb-4">
+          <BackButton fallback="/" label="Back to Home" />
+        </div>
+
         <div className="grid md:grid-cols-[1.1fr_0.9fr] gap-16 items-start">
           {/* IMAGE */}
           <Gallery images={images} name={dress.name} />
