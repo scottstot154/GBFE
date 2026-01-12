@@ -9,6 +9,13 @@ import { Dress } from "@/types";
 import Snackbar from "@/components/Snackbar";
 import { supabase } from "@/lib/supabaseClient";
 
+function isCollectionSoldOut(sizes: Dress["sizes"]) {
+  const safeSizes = sizes ?? {};
+  return !Object.values(safeSizes).some((items) =>
+    items.some((item) => item.status === "available")
+  );
+}
+
 export default function InfoPanel({ dress }: { dress: Dress }) {
   const router = useRouter();
   const [selectedSize, setSelectedSize] = useState<SelectedSize | null>(null);
@@ -57,6 +64,8 @@ export default function InfoPanel({ dress }: { dress: Dress }) {
     }
   }
 
+  const soldOut = isCollectionSoldOut(dress.sizes);
+
   return (
     <div className="flex flex-col gap-10">
       {/* TITLE */}
@@ -65,6 +74,11 @@ export default function InfoPanel({ dress }: { dress: Dress }) {
           {dress.name}
         </h1>
         <div className="text-xl font-medium">₹{dress.cost.toFixed(0)}</div>
+        {soldOut && (
+          <span className="text-xs uppercase tracking-wide px-2 py-1 rounded-full bg-red-100 text-red-700">
+            Sold Out
+          </span>
+        )}
       </div>
 
       {/* DESCRIPTION */}
