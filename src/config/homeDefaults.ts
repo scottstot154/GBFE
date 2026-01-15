@@ -5,11 +5,16 @@ export const HOME_BANNER_DEFAULT = {
 };
 
 export const HOME_ABOUT_DEFAULT = {
+  title: "About Our Boutique",
+  subtitle: "Our Story",
   content: {
     paragraphs: [
-      "We create thoughtfully designed clothing.",
-      "Rooted in tradition, made for modern living.",
+      "We design handcrafted clothing inspired by Indian craftsmanship.",
+      "Each piece is made with care, comfort, and timeless elegance.",
     ],
   },
-  image_url: "/images/banner-summer-placeholder.jpg",
+  cta: {
+    label: "View Collection",
+    href: "/collections",
+  },
 };

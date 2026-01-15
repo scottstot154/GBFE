@@ -8,30 +8,31 @@ const Footer: React.FC = () => {
     footerConfig;
 
   return (
-    <footer className="bg-card border-t border-[color:var(--border)] mt-16">
-      <div className="max-w-6xl mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+    <footer className="mt-24 bg-background">
+      <div className="max-w-6xl mx-auto px-4 py-16">
+        {/* TOP GRID */}
+        <div className="grid gap-12 sm:grid-cols-2 md:grid-cols-4">
           {/* BRAND */}
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">
+          <div className="space-y-3">
+            <h3 className="text-base font-medium tracking-tight">
               {brand.name}
             </h3>
-            <p className="mt-2 text-sm text-foreground/70 leading-relaxed">
+            <p className="text-sm leading-relaxed text-foreground/65">
               {brand.description}
             </p>
           </div>
 
           {/* SHOP */}
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wide">
+            <h4 className="text-xs font-medium uppercase tracking-wider text-foreground/80">
               Shop
             </h4>
-            <ul className="mt-3 space-y-2 text-sm">
+            <ul className="mt-4 space-y-2 text-sm">
               {shopLinks.map((link) => (
-                <li key={link.href}>
+                <li key={link.id}>
                   <Link
                     href={link.href}
-                    className="text-foreground/70 hover:text-foreground transition"
+                    className="text-foreground/60 hover:text-foreground transition"
                   >
                     {link.label}
                   </Link>
@@ -42,15 +43,15 @@ const Footer: React.FC = () => {
 
           {/* SUPPORT */}
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wide">
+            <h4 className="text-xs font-medium uppercase tracking-wider text-foreground/80">
               Support
             </h4>
-            <ul className="mt-3 space-y-2 text-sm">
+            <ul className="mt-4 space-y-2 text-sm">
               {supportLinks.map((link) => (
-                <li key={link.href}>
+                <li key={link.id}>
                   <Link
                     href={link.href}
-                    className="text-foreground/70 hover:text-foreground transition"
+                    className="text-foreground/60 hover:text-foreground transition"
                   >
                     {link.label}
                   </Link>
@@ -61,17 +62,17 @@ const Footer: React.FC = () => {
 
           {/* SOCIAL */}
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wide">
-              Follow Us
+            <h4 className="text-xs font-medium uppercase tracking-wider text-foreground/80">
+              Follow
             </h4>
-            <div className="mt-3 flex gap-4">
+            <div className="mt-4 flex items-center gap-4">
               {socialLinks.instagram && (
                 <a
                   href={socialLinks.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
-                  className="text-foreground/70 hover:text-primary transition"
+                  className="text-foreground/60 hover:text-primary transition"
                 >
                   <SiInstagram className="w-5 h-5" />
                 </a>
@@ -83,7 +84,7 @@ const Footer: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Pinterest"
-                  className="text-foreground/70 hover:text-primary transition"
+                  className="text-foreground/60 hover:text-primary transition"
                 >
                   <SiPinterest className="w-5 h-5" />
                 </a>
@@ -93,15 +94,15 @@ const Footer: React.FC = () => {
         </div>
 
         {/* BOTTOM BAR */}
-        <div className="mt-10 pt-6 border-t border-[color:var(--border)] text-sm text-foreground/60 flex flex-col sm:flex-row justify-between gap-4">
+        <div className="mt-16 flex flex-col gap-4 border-t border-border/60 pt-6 text-sm text-foreground/50 sm:flex-row sm:items-center sm:justify-between">
           <span>
             © {new Date().getFullYear()} {brand.name}. All rights reserved.
           </span>
 
-          <div className="flex gap-4">
+          <div className="flex gap-6">
             {legalLinks.map((link) => (
               <Link
-                key={link.href}
+                key={link.id}
                 href={link.href}
                 className="hover:text-foreground transition"
               >
