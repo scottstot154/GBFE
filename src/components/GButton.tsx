@@ -35,7 +35,7 @@ export type GButtonProps<E extends ElementType = "button"> = PropsToOmit<
 /* Tailwind classes for variants & sizes (kept your theme tokens) */
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-primary text-primary-foreground hover:bg-[color:var(--primary)]/90 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--ring)]",
+    "bg-primary text-primary-foreground rounded-full px-6 py-2.5 text-sm font-medium hover:bg-primary/90 transition",
   secondary:
     "bg-secondary text-secondary-foreground hover:bg-[color:var(--secondary)]/95 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--ring)]",
   outline:
