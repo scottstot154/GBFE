@@ -4,7 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import { formatPrice } from "@/lib/formatPrice";
 import BackButton from "@/components/navigation/BackButton";
 import InvoiceButton from "./InvoiceButton";
-import type { Address, Order, OrderItem } from "@/types";
+import type { Order, OrderItem } from "@/types";
 
 export default async function OrderDetailsPage({
   params,
@@ -15,6 +15,7 @@ export default async function OrderDetailsPage({
 
   const supabase = await createSupabaseServerClient();
 
+  console.log("Fetching order details for ID:", id);
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -26,7 +27,7 @@ export default async function OrderDetailsPage({
   // 1️⃣ Order
   const { data: order, error } = await supabase
     .from("orders")
-    .select("id, total_amount, status, created_at, address_id")
+    .select("id, total_amount, status, created_at, shipping_address")
     .eq("id", id)
     .eq("user_id", user.id)
     .single<Order>();
@@ -37,16 +38,10 @@ export default async function OrderDetailsPage({
   const { data: items } = await supabase
     .from("order_items")
     .select("name, size, price, image")
-    .eq("order_id", order.id);
+    .eq("order_id", order.id)
+    .returns<OrderItem[]>();
 
-  // 3️⃣ Address
-  const { data: address } = await supabase
-    .from("addresses")
-    .select("id, name, phone, line1, city, state, postal_code")
-    .eq("id", order.address_id)
-    .single<Address>();
-
-  if (!items || !address) notFound();
+  if (!items) notFound();
 
   if (!items || items.length === 0) {
     notFound();
@@ -96,18 +91,19 @@ export default async function OrderDetailsPage({
         <h2 className="text-lg font-medium">Delivery Address</h2>
 
         <div className="border rounded-xl bg-card p-4 text-sm space-y-1">
-          <p className="font-medium">{address.name}</p>
-          <p>{address.line1}</p>
+          <p className="font-medium">{order.shipping_address.name}</p>
+          <p>{order.shipping_address.line1}</p>
           <p>
-            {address.city}, {address.state} {address.postal_code}
+            {order.shipping_address.city}, {order.shipping_address.state}{" "}
+            {order.shipping_address.postal_code}
           </p>
-          <p>Phone: {address.phone}</p>
+          <p>Phone: {order.shipping_address.phone}</p>
         </div>
       </section>
 
       {/* ACTIONS */}
       <section className="pt-6">
-        <InvoiceButton order={order} items={items} address={address} />
+        <InvoiceButton order={order} items={items} />
       </section>
 
       {/* TOTAL */}

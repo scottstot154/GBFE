@@ -5,16 +5,14 @@ import GButton from "@/components/GButton";
 import Snackbar from "@/components/Snackbar";
 import { generateInvoicePdf } from "@/lib/generateInvoicePdf";
 import { downloadPdf } from "@/lib/downloadPdf";
-import type { Order, OrderItem, Address } from "@/types";
+import type { Order, OrderItem } from "@/types";
 
 export default function InvoiceButton({
   order,
   items,
-  address,
 }: {
   order: Order;
   items: OrderItem[];
-  address: Address;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,9 +21,7 @@ export default function InvoiceButton({
     try {
       setLoading(true);
 
-      console.log("Invoice input", { order, items, address });
-
-      const pdfBytes = await generateInvoicePdf(order, items, address);
+      const pdfBytes = await generateInvoicePdf(order, items);
 
       console.log("PDF generated, size:", pdfBytes.byteLength);
 

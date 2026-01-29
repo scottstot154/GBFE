@@ -6,6 +6,7 @@ import Link from "next/link";
 import clsx from "clsx";
 import { Dress } from "@/types";
 import { Icons } from "@/components/Icons";
+import { formatPrice } from "@/lib/formatPrice";
 
 export default function DressCard({ dress }: { dress: Dress }) {
   const images = dress.images?.length
@@ -149,7 +150,7 @@ export default function DressCard({ dress }: { dress: Dress }) {
         )}
 
         <div className="pt-3 flex items-center justify-between">
-          <span className="text-price">₹{dress.cost / 100}</span>
+          <span className="text-price">{formatPrice(dress.cost)}</span>
 
           <Link
             href={`/collection/${dress.collection_id}`}

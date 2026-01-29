@@ -3,7 +3,7 @@
 import { SizeInventoryItem, SizesMap } from "@/types";
 import clsx from "clsx";
 
-export type SelectedSize = {
+export type SelectedSizeType = {
   size: string;
   item_id: string;
 };
@@ -14,8 +14,8 @@ export default function SizeSelector({
   onChange,
 }: {
   sizes?: SizesMap | null;
-  value: SelectedSize | null;
-  onChange: (v: SelectedSize) => void;
+  value: SelectedSizeType | null;
+  onChange: (v: SelectedSizeType) => void;
 }) {
   if (!sizes) return null;
 

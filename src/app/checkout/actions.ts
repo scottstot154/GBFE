@@ -5,19 +5,29 @@ import { createSupabaseServerClient } from "@/lib/supabaseServer";
 
 export async function createCheckout(address_id: string) {
   const supabase = await createSupabaseServerClient();
-  console.log("Creating checkout with address ID:", address_id);
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error("Unauthorized");
 
-  const { data, error } = await supabase.rpc("create_checkout", {
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
+  const { data: checkoutId, error } = await supabase.rpc("create_checkout", {
     p_address_id: address_id,
   });
-  if (error) throw new Error(error.message);
-  if (!data || data.length === 0) throw new Error("Checkout creation failed");
 
-  return data[0];
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  if (!checkoutId) {
+    throw new Error("Checkout creation failed");
+  }
+
+  // ✅ checkoutId is already a UUID string
+  return checkoutId;
 }
 
 export async function finalizeCheckout(checkoutId: string) {

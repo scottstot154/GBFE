@@ -22,21 +22,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "item_id required" }, { status: 400 });
   }
 
-  const { data, error } = await supabase
-    .from("cart_items")
-    .insert({
-      user_id: user.id,
-      item_id,
-      quantity: 1,
-    })
-    .select()
-    .single();
+  const { data, error } = await supabase.rpc("add_to_cart", {
+    p_user_id: user.id,
+    p_item_id: item_id,
+  });
 
   if (error) {
     return NextResponse.json(
       {
         error: error.message,
-        code: error.code, // 👈 IMPORTANT
+        code: error.code,
       },
       { status: 400 }
     );
