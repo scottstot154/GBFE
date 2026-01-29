@@ -71,7 +71,7 @@ export type Order = {
   total_amount: Money;
   status: OrderStatus;
   created_at: string;
-  address_id: string;
+  shipping_address: Omit<Address, "user_id" | "is_default" | "created_at">;
   order_items: OrderItem[];
 };
 
@@ -138,4 +138,9 @@ export type RpcError = {
 export type UiError = {
   title: string;
   description?: string;
+};
+
+export type AddAddressFormProps = {
+  initialData?: Address;
+  onDone: () => void;
 };

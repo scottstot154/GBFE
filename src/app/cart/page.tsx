@@ -92,7 +92,7 @@ export default function CartPage() {
 
                 <div className="flex items-center justify-between">
                   <span className="font-medium">
-                    {formatPrice(Number(item.price))}
+                    {formatPrice(BigInt(item.price))}
                   </span>
 
                   <button
@@ -121,7 +121,7 @@ export default function CartPage() {
 
         <div className="flex justify-between font-medium text-base">
           <span>Total</span>
-          <span>{formatPrice(Number(data.total_price))}</span>
+          <span>{formatPrice(BigInt(data.total_price))}</span>
         </div>
 
         <GButton

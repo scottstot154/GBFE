@@ -1,26 +1,83 @@
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { Address } from "@/types";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { supabaseBaseQuery } from "./supabaseBaseQuery";
 
 export const addressApi = createApi({
   reducerPath: "addressApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
-  tagTypes: ["Address"],
+  baseQuery: supabaseBaseQuery(),
+  tagTypes: ["Addresses"],
 
   endpoints: (builder) => ({
-    getAddresses: builder.query<{ addresses: Address[] }, void>({
-      query: () => "/addresses",
-      providesTags: ["Address"],
+    // ---------------------------
+    // GET ADDRESSES
+    // ---------------------------
+    getAddresses: builder.query<Address[], void>({
+      query: () => ({
+        table: "addresses",
+        action: "select",
+      }),
+      providesTags: ["Addresses"],
     }),
 
-    addAddress: builder.mutation<Address, Partial<Address>>({
-      query: (body) => ({
-        url: "/addresses",
-        method: "POST",
-        body,
+    // ---------------------------
+    // ADD ADDRESS
+    // ---------------------------
+    addAddress: builder.mutation<void, Partial<Address>>({
+      query: (values) => ({
+        table: "addresses",
+        action: "insert",
+        values,
       }),
-      invalidatesTags: ["Address"],
+      invalidatesTags: ["Addresses"],
+    }),
+
+    // ---------------------------
+    // UPDATE ADDRESS
+    // ---------------------------
+    updateAddress: builder.mutation<
+      void,
+      { id: string; data: Partial<Address> }
+    >({
+      query: ({ id, data }) => ({
+        table: "addresses",
+        action: "update",
+        match: { id },
+        values: data,
+      }),
+      invalidatesTags: ["Addresses"],
+    }),
+
+    // ---------------------------
+    // DELETE ADDRESS
+    // ---------------------------
+    deleteAddress: builder.mutation<void, string>({
+      query: (id) => ({
+        table: "addresses",
+        action: "delete",
+        match: { id },
+      }),
+      invalidatesTags: ["Addresses"],
+    }),
+
+    // ---------------------------
+    // SET DEFAULT ADDRESS
+    // ---------------------------
+    setDefaultAddress: builder.mutation<void, string>({
+      query: (id) => ({
+        table: "addresses",
+        action: "update",
+        match: { id },
+        values: { is_default: true },
+      }),
+      invalidatesTags: ["Addresses"],
     }),
   }),
 });
 
-export const { useGetAddressesQuery, useAddAddressMutation } = addressApi;
+export const {
+  useGetAddressesQuery,
+  useAddAddressMutation,
+  useUpdateAddressMutation,
+  useDeleteAddressMutation,
+  useSetDefaultAddressMutation,
+} = addressApi;
