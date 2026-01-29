@@ -15,6 +15,6 @@ export const HOME_ABOUT_DEFAULT = {
   },
   cta: {
     label: "View Collection",
-    href: "/collections",
+    href: "/collection",
   },
 };
