@@ -33,12 +33,7 @@ export default function Drawer({
       <div
         onClick={onClose}
         style={{ top: NAVBAR_HEIGHT }}
-        className="
-          fixed inset-x-0 bottom-0
-          z-40
-          bg-black/60
-          backdrop-blur-[2px]
-        "
+        className="fixed inset-0 bg-black/50 z-40"
       />
 
       {/* Drawer — BELOW navbar */}
@@ -52,11 +47,9 @@ export default function Drawer({
     w-[360px] max-w-[90vw]
     h-[calc(100vh-64px)]
     
-    bg-white
+   bg-white border-l border-[color:var(--border)] shadow-2xl
+
     text-foreground
-    
-    border-l border-border
-    shadow-[0_0_40px_rgba(0,0,0,0.15)]
     
     transition-transform duration-300 ease-out
     `,

@@ -144,3 +144,11 @@ export type AddAddressFormProps = {
   initialData?: Address;
   onDone: () => void;
 };
+
+export type SizeGuide = {
+  label: string; // S / M / L
+  description: string; // Slim fit, relaxed, etc.
+  bust?: string;
+  waist?: string;
+  hips?: string;
+};

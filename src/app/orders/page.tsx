@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import OrderCard from "./OrderCard";
 import { Order } from "@/types";
+import OrdersSkeleton from "./OrdersSkeleton";
 
 export default async function OrdersPage() {
   const supabase = await createSupabaseServerClient();
@@ -34,6 +35,14 @@ export default async function OrdersPage() {
     .order("created_at", { ascending: false })
     .returns<Order[]>();
 
+  if (!orders) {
+    return (
+      <main className="max-w-5xl mx-auto px-4 py-16">
+        <OrdersSkeleton />
+      </main>
+    );
+  }
+
   if (error) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-red-600">
@@ -59,7 +68,7 @@ export default async function OrdersPage() {
 
       <div className="space-y-4">
         {orders.map((order) => (
-          <OrderCard key={order.id} order={order} />
+          <OrderCard key={order.id} order={order} items={order.order_items} />
         ))}
       </div>
     </main>

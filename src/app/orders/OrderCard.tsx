@@ -3,46 +3,69 @@ import Image from "next/image";
 import { formatPrice } from "@/lib/formatPrice";
 import { Order, OrderItem } from "@/types";
 
-export default function OrderCard({ order }: { order: Order }) {
+export default function OrderCard({
+  order,
+  items,
+}: {
+  order: Order;
+  items: OrderItem[];
+}) {
   return (
-    <Link href={`/orders/${order.id}`}>
-      <div className="border rounded-xl bg-card p-4 space-y-4 hover:border-primary transition cursor-pointer">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-foreground/60">
-              Order #{order.id.slice(0, 8)}
-            </p>
-            <p className="text-sm text-foreground/60">
-              {new Date(order.created_at).toLocaleDateString()}
-            </p>
+    <Link
+      href={`/orders/${order.id}`}
+      className="
+        block rounded-xl border bg-card p-6
+        hover:shadow-md transition
+      "
+    >
+      {/* Header */}
+      <div className="flex justify-between items-start">
+        <div>
+          <p className="text-sm font-medium">Order #{order.id.slice(0, 8)}</p>
+          <p className="text-xs text-foreground/60">
+            {new Date(order.created_at).toLocaleDateString("en-IN")}
+          </p>
+        </div>
+
+        <span
+          className="
+            text-xs font-medium px-2 py-1 rounded-full
+            bg-green-100 text-green-700
+          "
+        >
+          {order.status}
+        </span>
+      </div>
+
+      {/* Items preview */}
+      <div className="flex gap-3 mt-4">
+        {items.slice(0, 4).map((item, i) => (
+          <div
+            key={i}
+            className="relative h-16 w-12 rounded overflow-hidden bg-muted"
+          >
+            <Image
+              src={item.image || "/dress-placeholder.png"}
+              alt={item.name}
+              fill
+              className="object-cover"
+            />
           </div>
+        ))}
 
-          <span className="text-sm font-medium capitalize">{order.status}</span>
-        </div>
+        {items.length > 4 && (
+          <div className="text-xs flex items-center text-foreground/60">
+            +{items.length - 4} more
+          </div>
+        )}
+      </div>
 
-        {/* Preview items */}
-        <div className="flex gap-3">
-          {order.order_items.slice(0, 3).map((item: OrderItem, idx: number) => (
-            <div
-              key={idx}
-              className="relative w-12 h-16 rounded overflow-hidden"
-            >
-              <Image
-                src={item.image || "/dress-placeholder.png"}
-                alt={item.name}
-                fill
-                className="object-cover"
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Total */}
-        <div className="flex justify-between border-t pt-3">
-          <span className="text-sm">Total</span>
-          <span className="font-medium">{formatPrice(order.total_amount)}</span>
-        </div>
+      {/* Footer */}
+      <div className="flex justify-between items-center pt-4 mt-4 border-t">
+        <span className="text-sm text-foreground/70">Total</span>
+        <span className="text-sm font-medium">
+          {formatPrice(order.total_amount)}
+        </span>
       </div>
     </Link>
   );
