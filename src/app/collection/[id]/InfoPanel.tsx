@@ -9,6 +9,8 @@ import { useAddToCartMutation } from "@/store/api/cartApi";
 import { supabase } from "@/lib/supabaseClient";
 import Snackbar from "@/components/Snackbar";
 import { formatPrice } from "@/lib/formatPrice";
+import SizeGuideModal from "@/components/SizeGuideModal";
+import { SIZE_GUIDE } from "@/config/sizeGuide";
 
 function isCollectionSoldOut(sizes: Dress["sizes"]) {
   const safeSizes = sizes ?? {};
@@ -22,6 +24,7 @@ export default function InfoPanel({ dress }: { dress: Dress }) {
   const [selectedSize, setSelectedSize] = useState<SelectedSizeType | null>(
     null
   );
+  const [showGuide, setShowGuide] = useState(false);
 
   const [snackbar, setSnackbar] = useState<string | null>(null);
 
@@ -92,6 +95,20 @@ export default function InfoPanel({ dress }: { dress: Dress }) {
           onChange={setSelectedSize}
         />
       )}
+
+      <button
+        type="button"
+        onClick={() => setShowGuide(true)}
+        className="text-sm text-primary underline-offset-4 hover:underline"
+      >
+        Need help choosing a size?
+      </button>
+
+      <SizeGuideModal
+        open={showGuide}
+        onClose={() => setShowGuide(false)}
+        sizes={SIZE_GUIDE}
+      />
 
       {/* CTA */}
       <GButton
