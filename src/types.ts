@@ -62,17 +62,44 @@ export type Address = {
 // Prices are stored as bigint (paise)
 export type Money = number | bigint;
 
-/**
- * Order row (orders table)
- */
+export type DeliveryStatus =
+  | "pending"
+  | "processing"
+  | "shipped"
+  | "out_for_delivery"
+  | "delivered"
+  | "cancelled"
+  | "returned";
+
+export type PaymentStatus = "paid" | "failed" | "refunded";
+
 export type Order = {
   id: string;
   user_id: string;
-  total_amount: Money;
-  status: OrderStatus;
+
+  total_amount: number | bigint;
+
+  status: PaymentStatus; // payment state
+  delivery_status: DeliveryStatus;
+
   created_at: string;
-  shipping_address: Omit<Address, "user_id" | "is_default" | "created_at">;
-  order_items: OrderItem[];
+
+  checkout_id: string | null;
+
+  shipping_address: {
+    name: string;
+    phone: string;
+    line1: string;
+    city: string;
+    state: string;
+    postal_code: string;
+  };
+
+  delivery_provider?: string | null;
+  tracking_number?: string | null;
+
+  shipped_at?: string | null;
+  delivered_at?: string | null;
 };
 
 /**

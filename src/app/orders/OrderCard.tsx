@@ -1,71 +1,84 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Order } from "@/types";
 import { formatPrice } from "@/lib/formatPrice";
-import { Order, OrderItem } from "@/types";
+import OrderStatusBadge from "./OrderStatusBadge";
 
-export default function OrderCard({
-  order,
-  items,
-}: {
-  order: Order;
-  items: OrderItem[];
-}) {
+type OrderItemPreview = {
+  name: string;
+  image: string | null;
+};
+
+export default async function OrderCard({ order }: { order: Order }) {
+  // 🔐 Fetch preview items SAFELY
+  // (max 4 images for preview)
+  const supabase = await import("@/lib/supabaseServer").then((m) =>
+    m.createSupabaseServerClient()
+  );
+
+  const { data: items } = await supabase
+    .from("order_items")
+    .select("name, image")
+    .eq("order_id", order.id)
+    .limit(4)
+    .returns<OrderItemPreview[]>();
+
+  const previewItems = items ?? [];
+
   return (
     <Link
       href={`/orders/${order.id}`}
       className="
-        block rounded-xl border bg-card p-6
-        hover:shadow-md transition
+        block
+        rounded-xl
+        border
+        bg-card
+        p-5
+        transition
+        hover:shadow-md
       "
     >
-      {/* Header */}
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="text-sm font-medium">Order #{order.id.slice(0, 8)}</p>
-          <p className="text-xs text-foreground/60">
+      {/* HEADER */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <p className="text-sm text-foreground/60">
+            Order #{order.id.slice(0, 8)}
+          </p>
+          <p className="text-xs text-foreground/50">
             {new Date(order.created_at).toLocaleDateString("en-IN")}
           </p>
         </div>
 
-        <span
-          className="
-            text-xs font-medium px-2 py-1 rounded-full
-            bg-green-100 text-green-700
-          "
-        >
-          {order.status}
-        </span>
+        <OrderStatusBadge status={order.delivery_status} />
       </div>
 
-      {/* Items preview */}
-      <div className="flex gap-3 mt-4">
-        {items.slice(0, 4).map((item, i) => (
-          <div
-            key={i}
-            className="relative h-16 w-12 rounded overflow-hidden bg-muted"
-          >
-            <Image
-              src={item.image || "/dress-placeholder.png"}
-              alt={item.name}
-              fill
-              className="object-cover"
-            />
-          </div>
-        ))}
+      {/* ITEMS PREVIEW */}
+      {previewItems.length > 0 && (
+        <div className="flex gap-3 mt-4">
+          {previewItems.map((item, i) => (
+            <div
+              key={`${order.id}-${i}`}
+              className="relative h-16 w-12 rounded overflow-hidden bg-muted"
+            >
+              <Image
+                src={item.image || "/dress-placeholder.png"}
+                alt={item.name}
+                fill
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
-        {items.length > 4 && (
-          <div className="text-xs flex items-center text-foreground/60">
-            +{items.length - 4} more
-          </div>
-        )}
-      </div>
-
-      {/* Footer */}
-      <div className="flex justify-between items-center pt-4 mt-4 border-t">
-        <span className="text-sm text-foreground/70">Total</span>
-        <span className="text-sm font-medium">
-          {formatPrice(order.total_amount)}
+      {/* FOOTER */}
+      <div className="mt-4 flex items-center justify-between">
+        <span className="text-sm text-foreground/60">
+          {previewItems.length} item
+          {previewItems.length !== 1 ? "s" : ""}
         </span>
+
+        <span className="font-medium">{formatPrice(order.total_amount)}</span>
       </div>
     </Link>
   );

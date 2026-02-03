@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import { formatPrice } from "@/lib/formatPrice";
 import BackButton from "@/components/navigation/BackButton";
 import InvoiceButton from "./InvoiceButton";
+import OrderItemsSkeleton from "./OrderItemsSkeleton";
 import type { Order, OrderItem } from "@/types";
 
 export default async function OrderDetailsPage({
@@ -15,7 +16,6 @@ export default async function OrderDetailsPage({
 
   const supabase = await createSupabaseServerClient();
 
-  console.log("Fetching order details for ID:", id);
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -24,28 +24,31 @@ export default async function OrderDetailsPage({
     redirect(`/login?redirect=/orders/${id}`);
   }
 
-  // 1️⃣ Order
+  // 1️⃣ Order (must exist)
   const { data: order, error } = await supabase
     .from("orders")
-    .select("id, total_amount, status, created_at, shipping_address")
+    .select(
+      `
+        id,
+        total_amount,
+        status,
+        delivery_status,
+        created_at,
+        shipping_address
+      `
+    )
     .eq("id", id)
     .eq("user_id", user.id)
     .single<Order>();
 
   if (!order || error) notFound();
 
-  // 2️⃣ Items
+  // 2️⃣ Items (can be empty, never crash)
   const { data: items } = await supabase
     .from("order_items")
     .select("name, size, price, image")
     .eq("order_id", order.id)
     .returns<OrderItem[]>();
-
-  if (!items) notFound();
-
-  if (!items || items.length === 0) {
-    notFound();
-  }
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-16 space-y-10">
@@ -58,7 +61,7 @@ export default async function OrderDetailsPage({
           Placed on {new Date(order.created_at).toLocaleDateString("en-IN")}
         </p>
         <span className="text-sm font-medium capitalize">
-          Status: {order.status}
+          Status: {order.delivery_status}
         </span>
       </header>
 
@@ -66,24 +69,33 @@ export default async function OrderDetailsPage({
       <section className="space-y-4">
         <h2 className="text-lg font-medium">Items</h2>
 
-        {items.map((item, idx) => (
-          <div key={idx} className="flex gap-4 p-4 border rounded-xl bg-card">
-            <div className="relative w-20 h-28 rounded overflow-hidden">
-              <Image
-                src={item.image ?? "/dress-placeholder.png"}
-                alt={item.name}
-                fill
-                className="object-cover"
-              />
-            </div>
+        {!items && <OrderItemsSkeleton />}
 
-            <div className="flex-1">
-              <p className="font-medium">{item.name}</p>
-              <p className="text-sm text-foreground/60">Size: {item.size}</p>
-              <p className="font-medium">{formatPrice(item.price)}</p>
+        {items && items.length === 0 && <EmptyItemsState />}
+
+        {items &&
+          items.length > 0 &&
+          items.map((item, idx) => (
+            <div
+              key={`${item.name}-${idx}`}
+              className="flex gap-4 p-4 border rounded-xl bg-card"
+            >
+              <div className="relative w-20 h-28 rounded overflow-hidden bg-muted">
+                <Image
+                  src={item.image ?? "/dress-placeholder.png"}
+                  alt={item.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+
+              <div className="flex-1">
+                <p className="font-medium">{item.name}</p>
+                <p className="text-sm text-foreground/60">Size: {item.size}</p>
+                <p className="font-medium">{formatPrice(item.price)}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </section>
 
       {/* ADDRESS */}
@@ -103,7 +115,7 @@ export default async function OrderDetailsPage({
 
       {/* ACTIONS */}
       <section className="pt-6">
-        <InvoiceButton order={order} items={items} />
+        <InvoiceButton order={order} items={items ?? []} />
       </section>
 
       {/* TOTAL */}
@@ -114,5 +126,15 @@ export default async function OrderDetailsPage({
         </span>
       </footer>
     </main>
+  );
+}
+
+/* ---------------- Empty State ---------------- */
+
+function EmptyItemsState() {
+  return (
+    <div className="border rounded-xl bg-card p-6 text-center text-sm text-foreground/60">
+      Items for this order are currently unavailable.
+    </div>
   );
 }
