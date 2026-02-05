@@ -114,7 +114,8 @@ export type OrderItem = {
   name: string;
   size: string;
   price: Money;
-  image?: string;
+  image: string;
+  collection_id: string;
 };
 
 /**

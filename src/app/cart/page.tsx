@@ -12,6 +12,7 @@ import Image from "next/image";
 import GButton from "@/components/GButton";
 import { formatPrice } from "@/lib/formatPrice";
 import { Icons } from "@/components/Icons";
+import Link from "next/link";
 
 export default function CartPage() {
   const router = useRouter();
@@ -73,14 +74,17 @@ export default function CartPage() {
               key={item.item_id}
               className="flex gap-4 p-4 border rounded-xl bg-card"
             >
-              <div className="relative w-24 h-32 rounded-lg overflow-hidden">
+              <Link
+                href={`/collection/${item.collection_id}`}
+                className="relative w-24 h-32 rounded-lg overflow-hidden"
+              >
                 <Image
                   src={item.image}
                   alt={item.name}
                   fill
                   className="object-cover"
                 />
-              </div>
+              </Link>
 
               <div className="flex-1 flex flex-col justify-between">
                 <div>
