@@ -15,14 +15,14 @@ import { SIZE_GUIDE } from "@/config/sizeGuide";
 function isCollectionSoldOut(sizes: Dress["sizes"]) {
   const safeSizes = sizes ?? {};
   return !Object.values(safeSizes).some((items) =>
-    items.some((item) => item.status === "available")
+    items.some((item) => item.status === "available"),
   );
 }
 
 export default function InfoPanel({ dress }: { dress: Dress }) {
   const router = useRouter();
   const [selectedSize, setSelectedSize] = useState<SelectedSizeType | null>(
-    null
+    null,
   );
   const [showGuide, setShowGuide] = useState(false);
 
@@ -48,7 +48,7 @@ export default function InfoPanel({ dress }: { dress: Dress }) {
 
   async function handleAddToCart() {
     if (!isLoggedIn) {
-      router.push(`/login?redirect=/dress/${dress.collection_id}`);
+      router.push(`/login?redirect=/collection/${dress.collection_id}`);
       return;
     }
 

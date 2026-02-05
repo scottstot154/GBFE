@@ -6,6 +6,7 @@ import BackButton from "@/components/navigation/BackButton";
 import InvoiceButton from "./InvoiceButton";
 import OrderItemsSkeleton from "./OrderItemsSkeleton";
 import type { Order, OrderItem } from "@/types";
+import Link from "next/link";
 
 export default async function OrderDetailsPage({
   params,
@@ -35,7 +36,7 @@ export default async function OrderDetailsPage({
         delivery_status,
         created_at,
         shipping_address
-      `
+      `,
     )
     .eq("id", id)
     .eq("user_id", user.id)
@@ -46,7 +47,7 @@ export default async function OrderDetailsPage({
   // 2️⃣ Items (can be empty, never crash)
   const { data: items } = await supabase
     .from("order_items")
-    .select("name, size, price, image")
+    .select("name, size, price, image, collection_id")
     .eq("order_id", order.id)
     .returns<OrderItem[]>();
 
@@ -80,14 +81,18 @@ export default async function OrderDetailsPage({
               key={`${item.name}-${idx}`}
               className="flex gap-4 p-4 border rounded-xl bg-card"
             >
-              <div className="relative w-20 h-28 rounded overflow-hidden bg-muted">
+              <Link
+                href={`/collection/${item.collection_id}`}
+                className="relative w-20 h-28 rounded overflow-hidden bg-muted flex-shrink-0
+             hover:opacity-90 transition cursor-pointer"
+              >
                 <Image
                   src={item.image ?? "/dress-placeholder.png"}
                   alt={item.name}
                   fill
                   className="object-cover"
                 />
-              </div>
+              </Link>
 
               <div className="flex-1">
                 <p className="font-medium">{item.name}</p>
