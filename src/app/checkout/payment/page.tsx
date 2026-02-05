@@ -20,10 +20,11 @@ export default function PaymentPage() {
     try {
       const orderId = await finalizeCheckout(checkoutId);
 
-      // ✅ Redirect to orders page
-      // after finalize_checkout succeeds
+      // ✅ Cart state refresh
       dispatch(cartApi.util.invalidateTags(["Cart"]));
-      router.push("/orders");
+
+      // ✅ Redirect user
+      router.push(`/orders/${orderId}`);
     } catch (err: unknown) {
       if (err instanceof Error) {
         toast.error(err.message);
