@@ -3,7 +3,6 @@ import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import OrderCard from "./OrderCard";
 import OrdersSkeleton from "./OrdersSkeleton";
 import { Order } from "@/types";
-import BackButton from "@/components/navigation/BackButton";
 
 export default async function OrdersPage() {
   const supabase = await createSupabaseServerClient();

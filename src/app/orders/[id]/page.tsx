@@ -2,7 +2,6 @@ import { redirect, notFound } from "next/navigation";
 import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import { formatPrice } from "@/lib/formatPrice";
-import BackButton from "@/components/navigation/BackButton";
 import InvoiceButton from "./InvoiceButton";
 import OrderItemsSkeleton from "./OrderItemsSkeleton";
 import type { Order, OrderItem } from "@/types";

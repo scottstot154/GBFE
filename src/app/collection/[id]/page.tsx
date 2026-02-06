@@ -3,7 +3,6 @@ import Gallery from "./Gallery";
 import InfoPanel from "./InfoPanel";
 import { supabase } from "@/lib/supabaseClient";
 import MoreLikeThisCarousel from "../MoreLikeThisCarousel";
-import BackButton from "@/components/navigation/BackButton";
 
 export default async function DressPage({
   params,
