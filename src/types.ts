@@ -4,7 +4,9 @@ export type Collection = {
   cost: number;
   image?: string;
   images?: string[];
+  tags?: string[];
   description?: string;
+  created_at: string;
 };
 
 export type SizeInventoryItem = {

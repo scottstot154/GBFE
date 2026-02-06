@@ -12,7 +12,14 @@ export async function DELETE() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  await supabase.from("cart_items").delete().eq("user_id", user.id);
+  const { error } = await supabase
+    .from("cart_items")
+    .delete()
+    .eq("user_id", user.id);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
 
   return NextResponse.json({ success: true });
 }

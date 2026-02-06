@@ -15,6 +15,7 @@ export default async function HomePage() {
   const { data: collections, error } = await supabaseServer
     .from("collections")
     .select("*")
+    .contains("tags", ["featured"])
     .order("created_at", { ascending: false });
 
   if (error) {
