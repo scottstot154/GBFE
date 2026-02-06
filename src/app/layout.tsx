@@ -4,6 +4,7 @@ import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "./providers";
+import GlobalBackNav from "@/components/navigation/GlobalBackNav";
 
 export const metadata: Metadata = {
   title: "Boutique",
@@ -34,7 +35,10 @@ export default function RootLayout({
           </header>
 
           {/* PAGE CONTENT */}
-          <main className="flex-1 w-full">{children}</main>
+          <main className="flex-1 w-full">
+            <GlobalBackNav />
+            {children}
+          </main>
 
           {/* FOOTER */}
           <Footer />

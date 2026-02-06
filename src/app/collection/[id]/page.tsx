@@ -32,8 +32,8 @@ export default async function DressPage({
   const images: string[] = dress.images?.length
     ? dress.images
     : dress.image
-    ? [dress.image]
-    : ["/dress-placeholder.png"];
+      ? [dress.image]
+      : ["/dress-placeholder.png"];
 
   const { data: moreLikeThis } = await supabaseServer
     .from("collections")

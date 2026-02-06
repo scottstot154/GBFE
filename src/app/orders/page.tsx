@@ -24,7 +24,7 @@ export default async function OrdersPage() {
       status,
       delivery_status,
       created_at
-    `
+    `,
     )
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
