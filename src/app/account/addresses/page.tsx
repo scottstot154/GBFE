@@ -9,6 +9,7 @@ import {
 import Modal from "@/components/Modal";
 import { Address } from "@/types";
 import AddAddressForm from "./AddAddressForm";
+import Snackbar from "@/components/Snackbar";
 
 export default function AddressesPage() {
   const { data, isLoading } = useGetAddressesQuery();
@@ -17,6 +18,7 @@ export default function AddressesPage() {
 
   const [mode, setMode] = useState<"list" | "add" | "edit">("list");
   const [editing, setEditing] = useState<Address | null>(null);
+  const [snackbar, setSnackbar] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -90,7 +92,17 @@ export default function AddressesPage() {
               </button>
 
               <button
-                onClick={() => deleteAddress(address.id)}
+                onClick={async () => {
+                  try {
+                    await deleteAddress(address.id).unwrap();
+                  } catch (err: any) {
+                    setSnackbar(
+                      err?.data?.message ||
+                        err?.message ||
+                        "Failed to delete address",
+                    );
+                  }
+                }}
                 className="text-red-600 hover:underline ml-auto"
               >
                 Remove
@@ -107,6 +119,10 @@ export default function AddressesPage() {
             onDone={() => setMode("list")}
           />
         </Modal>
+      )}
+
+      {snackbar && (
+        <Snackbar message={snackbar} onClose={() => setSnackbar(null)} />
       )}
     </main>
   );

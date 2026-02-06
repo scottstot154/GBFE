@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
-const supabaseServer = await createSupabaseServerClient();
 export async function GET() {
+  const supabaseServer = await createSupabaseServerClient();
   const { data, error } = await supabaseServer
     .from("collections")
     .select("*")

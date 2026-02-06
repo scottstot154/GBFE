@@ -11,9 +11,13 @@ import GButton from "@/components/GButton";
 export default function AddAddressForm({
   initialData,
   onDone,
+  afterSave,
+  setDefaultOnCreate,
 }: {
   initialData?: Address;
   onDone: () => void;
+  afterSave?: () => void;
+  setDefaultOnCreate?: boolean;
 }) {
   const [addAddress] = useAddAddressMutation();
   const [updateAddress] = useUpdateAddressMutation();
@@ -32,8 +36,12 @@ export default function AddAddressForm({
     if (initialData) {
       await updateAddress({ id: initialData.id, data: form });
     } else {
-      await addAddress(form);
+      await addAddress({
+        ...form,
+        ...(setDefaultOnCreate ? { is_default: true } : {}),
+      });
     }
+    afterSave?.();
     onDone();
   }
 
