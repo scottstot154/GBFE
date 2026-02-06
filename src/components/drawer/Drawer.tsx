@@ -29,11 +29,11 @@ export default function Drawer({
 
   return (
     <>
-      {/* Overlay — BELOW navbar */}
+      {/* Overlay — BELOW navbar, fade in to avoid hard edge */}
       <div
         onClick={onClose}
         style={{ top: NAVBAR_HEIGHT }}
-        className="fixed inset-0 bg-black/50 z-40"
+        className="fixed inset-0 bg-gradient-to-b from-black/0 via-black/30 to-black/50 z-40"
       />
 
       {/* Drawer — BELOW navbar */}
