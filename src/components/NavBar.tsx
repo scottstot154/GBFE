@@ -2,17 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useGetCartQuery } from "@/store/api/cartApi";
 import { Icons } from "./Icons";
-import AccountDrawer from "@/components/drawer/AccountDrawer";
 import clsx from "clsx";
 
 export default function NavBar() {
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [openDrawer, setOpenDrawer] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
+  const [email, setEmail] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   // 🔐 Auth state
   useEffect(() => {
@@ -24,11 +25,49 @@ export default function NavBar() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session);
-      setOpenDrawer(false);
+      setOpenMenu(false);
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setEmail(null);
+      return;
+    }
+    supabase.auth.getUser().then(({ data }) => {
+      setEmail(data.user?.email ?? null);
+    });
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    setOpenMenu(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!openMenu) return;
+
+    function handleOutsideClick(e: MouseEvent | TouchEvent) {
+      const target = e.target as Node;
+      if (menuRef.current && !menuRef.current.contains(target)) {
+        setOpenMenu(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("touchstart", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick);
+    };
+  }, [openMenu]);
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    setOpenMenu(false);
+  }
 
   // 🛒 Cart
   const { data } = useGetCartQuery(undefined, {
@@ -83,20 +122,60 @@ export default function NavBar() {
 
           {/* ACCOUNT */}
           {isLoggedIn ? (
-            <>
+            <div className="relative">
               <button
-                onClick={() => setOpenDrawer(true)}
+                onClick={() => setOpenMenu((v) => !v)}
                 className="flex items-center gap-2 text-sm text-foreground/60 hover:text-foreground transition"
+                aria-haspopup="menu"
+                aria-expanded={openMenu}
               >
-                <Icons.user className="w-4 h-4" />
-                Account
+                <Icons.menu className="w-5 h-5" />
+                <span className="hidden md:inline">Account</span>
               </button>
 
-              <AccountDrawer
-                open={openDrawer}
-                onClose={() => setOpenDrawer(false)}
-              />
-            </>
+              {openMenu && (
+                <div
+                  ref={menuRef}
+                  className="absolute right-0 mt-3 z-50 w-64 rounded-xl border border-border bg-card shadow-xl"
+                >
+                    <div className="px-4 py-3 border-b border-border">
+                      <p className="text-sm font-medium">Account</p>
+                      {email && (
+                        <p className="text-xs text-foreground/60 truncate">
+                          {email}
+                        </p>
+                      )}
+                    </div>
+
+                    <nav className="p-2 space-y-1">
+                      <Link
+                        href="/orders"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-foreground/70 hover:bg-muted hover:text-foreground transition"
+                      >
+                        <Icons.list className="w-4 h-4" />
+                        My Orders
+                      </Link>
+                      <Link
+                        href="/account/addresses"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-foreground/70 hover:bg-muted hover:text-foreground transition"
+                      >
+                        <Icons.mapPin className="w-4 h-4" />
+                        Addresses
+                      </Link>
+                    </nav>
+
+                    <div className="p-2 border-t border-border">
+                      <button
+                        onClick={handleLogout}
+                        className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-red-600/80 hover:text-red-600 hover:bg-red-50/60 transition"
+                      >
+                        <Icons.logout className="w-4 h-4" />
+                        Logout
+                      </button>
+                    </div>
+                </div>
+              )}
+            </div>
           ) : (
             <Link
               href="/signup"
