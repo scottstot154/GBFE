@@ -34,19 +34,6 @@ export const cartApi = createApi({
       invalidatesTags: ["Cart"],
     }),
 
-    // PUT /api/cart/items/:id
-    updateCartItem: builder.mutation<
-      { success: true },
-      { id: string; quantity: number }
-    >({
-      query: ({ id, quantity }) => ({
-        url: `/cart/items/${id}`,
-        method: "PUT",
-        body: { quantity },
-      }),
-      invalidatesTags: ["Cart"],
-    }),
-
     // DELETE /api/cart/items/:id
     removeCartItem: builder.mutation<{ success: true }, { item_id: string }>({
       query: ({ item_id }) => ({
@@ -70,7 +57,6 @@ export const cartApi = createApi({
 export const {
   useGetCartQuery,
   useAddToCartMutation,
-  useUpdateCartItemMutation,
   useRemoveCartItemMutation,
   useClearCartMutation,
 } = cartApi;

@@ -4,10 +4,11 @@ import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "./providers";
+import GlobalBackNav from "@/components/navigation/GlobalBackNav";
 
 export const metadata: Metadata = {
   title: "Boutique",
-  description: "Handcrafted collections",
+  description: "Handcrafted collections inspired by Indian craftsmanship",
 };
 
 export default function RootLayout({
@@ -16,19 +17,43 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
+    <html lang="en" className="font-sans">
+      <body
+        className="
+          min-h-screen 
+          flex 
+          flex-col 
+          bg-background 
+          text-foreground 
+          antialiased
+        "
+      >
         <Providers>
-          {/* Global UI */}
-          <NavBar />
+          {/* NAVBAR */}
+          <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md">
+            <NavBar />
+          </header>
 
-          {/* Page content */}
-          <main className="flex-1">{children}</main>
+          {/* PAGE CONTENT */}
+          <main className="flex-1 w-full">
+            <GlobalBackNav />
+            {children}
+          </main>
 
+          {/* FOOTER */}
           <Footer />
 
-          {/* Toasts */}
-          <Toaster position="bottom-center" />
+          {/* GLOBAL TOASTS */}
+          <Toaster
+            position="bottom-center"
+            toastOptions={{
+              style: {
+                background: "hsl(var(--card))",
+                color: "hsl(var(--foreground))",
+                borderRadius: "12px",
+              },
+            }}
+          />
         </Providers>
       </body>
     </html>

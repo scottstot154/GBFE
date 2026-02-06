@@ -12,6 +12,7 @@ import Image from "next/image";
 import GButton from "@/components/GButton";
 import { formatPrice } from "@/lib/formatPrice";
 import { Icons } from "@/components/Icons";
+import Link from "next/link";
 
 export default function CartPage() {
   const router = useRouter();
@@ -64,7 +65,8 @@ export default function CartPage() {
     <main className="max-w-5xl mx-auto px-4 py-16 grid gap-12 md:grid-cols-[1.4fr_0.6fr]">
       {/* LEFT — ITEMS */}
       <section className="space-y-6">
-        <h1 className="text-2xl font-medium tracking-tight">Shopping Cart</h1>
+        <h1 className="heading-page">Shopping Cart</h1>
+        <p className="text-muted">Shipping & taxes calculated at checkout</p>
 
         <div className="space-y-4">
           {data.items.map((item) => (
@@ -72,14 +74,17 @@ export default function CartPage() {
               key={item.item_id}
               className="flex gap-4 p-4 border rounded-xl bg-card"
             >
-              <div className="relative w-24 h-32 rounded-lg overflow-hidden">
+              <Link
+                href={`/collection/${item.collection_id}`}
+                className="relative w-24 h-32 rounded-lg overflow-hidden"
+              >
                 <Image
                   src={item.image}
                   alt={item.name}
                   fill
                   className="object-cover"
                 />
-              </div>
+              </Link>
 
               <div className="flex-1 flex flex-col justify-between">
                 <div>
@@ -90,7 +95,9 @@ export default function CartPage() {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">{formatPrice(item.price)}</span>
+                  <span className="font-medium">
+                    {formatPrice(BigInt(item.price))}
+                  </span>
 
                   <button
                     disabled={removing}
@@ -118,7 +125,7 @@ export default function CartPage() {
 
         <div className="flex justify-between font-medium text-base">
           <span>Total</span>
-          <span>{formatPrice(data.total_price)}</span>
+          <span>{formatPrice(BigInt(data.total_price))}</span>
         </div>
 
         <GButton

@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   ArrowRight,
   MapPin,
+  Menu,
 } from "lucide-react";
 
 export const Icons = {
@@ -34,4 +35,5 @@ export const Icons = {
   arrowLeft: ArrowLeft,
   arrowRight: ArrowRight,
   mapPin: MapPin,
+  menu: Menu,
 };

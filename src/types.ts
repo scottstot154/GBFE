@@ -4,7 +4,9 @@ export type Collection = {
   cost: number;
   image?: string;
   images?: string[];
+  tags?: string[];
   description?: string;
+  created_at: string;
 };
 
 export type SizeInventoryItem = {
@@ -62,17 +64,44 @@ export type Address = {
 // Prices are stored as bigint (paise)
 export type Money = number | bigint;
 
-/**
- * Order row (orders table)
- */
+export type DeliveryStatus =
+  | "pending"
+  | "processing"
+  | "shipped"
+  | "out_for_delivery"
+  | "delivered"
+  | "cancelled"
+  | "returned";
+
+export type PaymentStatus = "paid" | "failed" | "refunded";
+
 export type Order = {
   id: string;
   user_id: string;
-  total_amount: Money;
-  status: OrderStatus;
+
+  total_amount: number | bigint;
+
+  status: PaymentStatus; // payment state
+  delivery_status: DeliveryStatus;
+
   created_at: string;
-  address_id: string;
-  order_items: OrderItem[];
+
+  checkout_id: string | null;
+
+  shipping_address: {
+    name: string;
+    phone: string;
+    line1: string;
+    city: string;
+    state: string;
+    postal_code: string;
+  };
+
+  delivery_provider?: string | null;
+  tracking_number?: string | null;
+
+  shipped_at?: string | null;
+  delivered_at?: string | null;
 };
 
 /**
@@ -87,7 +116,8 @@ export type OrderItem = {
   name: string;
   size: string;
   price: Money;
-  image?: string;
+  image: string;
+  collection_id: string;
 };
 
 /**
@@ -138,4 +168,17 @@ export type RpcError = {
 export type UiError = {
   title: string;
   description?: string;
+};
+
+export type AddAddressFormProps = {
+  initialData?: Address;
+  onDone: () => void;
+};
+
+export type SizeGuide = {
+  label: string; // S / M / L
+  description: string; // Slim fit, relaxed, etc.
+  bust?: string;
+  waist?: string;
+  hips?: string;
 };

@@ -1,11 +1,14 @@
-import React, { useState, useRef } from "react";
-import Image from "next/image";
-import GButton from "./GButton";
-import Link from "next/link";
-import { Dress } from "@/types";
-import { Icons } from "./Icons";
+"use client";
 
-const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
+import React, { useRef, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import clsx from "clsx";
+import { Dress } from "@/types";
+import { Icons } from "@/components/Icons";
+import { formatPrice } from "@/lib/formatPrice";
+
+export default function DressCard({ dress }: { dress: Dress }) {
   const images = dress.images?.length
     ? dress.images
     : dress.image
@@ -15,21 +18,20 @@ const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
   const [index, setIndex] = useState(0);
   const [zoom, setZoom] = useState(false);
 
-  const sliderRef = useRef<HTMLDivElement>(null);
-
-  // -----------------------------
-  // Arrow Navigation
-  // -----------------------------
+  /* ------------------------------
+     Carousel Navigation
+  --------------------------------*/
   function prev() {
     setIndex((i) => (i === 0 ? images.length - 1 : i - 1));
   }
+
   function next() {
     setIndex((i) => (i === images.length - 1 ? 0 : i + 1));
   }
 
-  // -----------------------------
-  // Touch Drag / Swipe Support
-  // -----------------------------
+  /* ------------------------------
+     Touch Swipe
+  --------------------------------*/
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
@@ -43,31 +45,21 @@ const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
 
   function onTouchEnd() {
     const delta = touchEndX.current - touchStartX.current;
-    if (Math.abs(delta) > 50) {
-      if (delta > 0) prev();
-      else next();
+    if (Math.abs(delta) > 60) {
+      delta > 0 ? prev() : next();
     }
   }
 
-  // -----------------------------
-  // Desktop Hover Zoom
-  // -----------------------------
-  function enableZoom() {
-    setZoom(true);
-  }
-  function disableZoom() {
-    setZoom(false);
-  }
-
-  // -----------------------------
-  // Mobile Long-press Zoom
-  // -----------------------------
+  /* ------------------------------
+     Long Press Zoom (Mobile)
+  --------------------------------*/
   const pressTimer = useRef<NodeJS.Timeout | null>(null);
 
-  function onTouchHoldStart() {
-    pressTimer.current = setTimeout(() => setZoom(true), 300); // long press
+  function onPressStart() {
+    pressTimer.current = setTimeout(() => setZoom(true), 250);
   }
-  function onTouchHoldEnd() {
+
+  function onPressEnd() {
     if (pressTimer.current) {
       clearTimeout(pressTimer.current);
       pressTimer.current = null;
@@ -76,37 +68,38 @@ const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
   }
 
   return (
-    <div className="bg-card rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300">
-      {/* IMAGE CAROUSEL */}
+    <div className="bg-card rounded-xl transition-transform duration-300 hover:-translate-y-1">
+      {/* IMAGE */}
       <div
-        className="relative h-56 w-full overflow-hidden rounded-t-lg bg-[color:var(--card)]"
-        onMouseEnter={enableZoom}
-        onMouseLeave={disableZoom}
+        className="relative w-full aspect-[3/4] overflow-hidden rounded-t-xl bg-card"
+        onMouseEnter={() => setZoom(true)}
+        onMouseLeave={() => setZoom(false)}
         onTouchStart={(e) => {
           onTouchStart(e);
-          onTouchHoldStart();
+          onPressStart();
         }}
         onTouchMove={onTouchMove}
         onTouchEnd={() => {
           onTouchEnd();
-          onTouchHoldEnd();
+          onPressEnd();
         }}
       >
         {/* SLIDER */}
         <div
-          ref={sliderRef}
-          className={`flex h-full transition-transform duration-300 ${
-            zoom ? "scale-110" : "scale-100"
-          }`}
+          className="flex h-full transition-transform duration-300"
           style={{ transform: `translateX(-${index * 100}%)` }}
         >
           {images.map((img, idx) => (
-            <div key={idx} className="relative h-56 w-full flex-shrink-0">
+            <div key={idx} className="relative w-full h-full flex-shrink-0">
               <Image
                 src={img}
                 alt={`${dress.name} image ${idx + 1}`}
                 fill
-                className="object-contain"
+                sizes="(max-width: 768px) 100vw, 33vw"
+                className={clsx(
+                  "object-cover transition-transform duration-300",
+                  zoom && idx === index && "scale-110"
+                )}
               />
             </div>
           ))}
@@ -117,18 +110,14 @@ const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
           <>
             <button
               onClick={prev}
-              className="absolute top-1/2 left-2 -translate-y-1/2 
-                bg-black/20 backdrop-blur px-2 py-1 rounded-full text-white text-xs 
-                hover:bg-black/30 transition"
+              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/25 backdrop-blur p-1.5 text-white opacity-0 hover:bg-black/35 transition group-hover:opacity-100"
             >
               <Icons.chevronLeft className="w-4 h-4" />
             </button>
 
             <button
               onClick={next}
-              className="absolute top-1/2 right-2 -translate-y-1/2 
-                bg-black/20 backdrop-blur px-2 py-1 rounded-full text-white text-xs 
-                hover:bg-black/30 transition"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/25 backdrop-blur p-1.5 text-white opacity-0 hover:bg-black/35 transition group-hover:opacity-100"
             >
               <Icons.chevronRight className="w-4 h-4" />
             </button>
@@ -137,14 +126,15 @@ const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
 
         {/* DOTS */}
         {images.length > 1 && (
-          <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
-            {images.map((_, idx) => (
-              <div
-                key={idx}
-                onClick={() => setIndex(idx)}
-                className={`h-2 w-2 rounded-full cursor-pointer ${
-                  idx === index ? "bg-primary" : "bg-[color:var(--border)]"
-                }`}
+          <div className="absolute bottom-3 inset-x-0 flex justify-center gap-1.5">
+            {images.map((_, i) => (
+              <span
+                key={i}
+                onClick={() => setIndex(i)}
+                className={clsx(
+                  "h-1.5 w-1.5 rounded-full cursor-pointer transition",
+                  i === index ? "bg-white" : "bg-white/50 hover:bg-white/80"
+                )}
               />
             ))}
           </div>
@@ -152,27 +142,24 @@ const DressCard: React.FC<{ dress: Dress }> = ({ dress }) => {
       </div>
 
       {/* DETAILS */}
-      <div className="p-5">
-        <h3 className="text-base font-medium text-foreground leading-snug">
-          {dress.name}
-        </h3>
+      <div className="p-5 space-y-2">
+        <h3 className="heading-card">{dress.name}</h3>
 
-        <p className="mt-1 text-sm text-foreground/70">{dress.description}</p>
+        {dress.description && (
+          <p className="text-muted line-clamp-2">{dress.description}</p>
+        )}
 
-        <div className="mt-4 flex items-center justify-between">
-          <span className="text-base font-semibold text-foreground">
-            ₹{dress.cost}
-          </span>
+        <div className="pt-3 flex items-center justify-between">
+          <span className="text-price">{formatPrice(dress.cost)}</span>
 
-          <Link href={`/collection/${dress.collection_id}`}>
-            <GButton variant="primary" size="sm">
-              View
-            </GButton>
+          <Link
+            href={`/collection/${dress.collection_id}`}
+            className="text-sm text-link"
+          >
+            View →
           </Link>
         </div>
       </div>
     </div>
   );
-};
-
-export default DressCard;
+}

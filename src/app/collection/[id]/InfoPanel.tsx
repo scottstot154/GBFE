@@ -1,24 +1,30 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import GButton from "@/components/GButton";
-import SizeSelector, { SelectedSize } from "./SizeSelector";
-import { useAddToCartMutation } from "@/store/api/cartApi";
 import { useEffect, useState } from "react";
+import GButton from "@/components/GButton";
+import SizeSelector, { SelectedSizeType } from "./SizeSelector";
 import { Dress } from "@/types";
-import Snackbar from "@/components/Snackbar";
+import { useAddToCartMutation } from "@/store/api/cartApi";
 import { supabase } from "@/lib/supabaseClient";
+import Snackbar from "@/components/Snackbar";
+import { formatPrice } from "@/lib/formatPrice";
+import SizeGuideModal from "@/components/SizeGuideModal";
+import { SIZE_GUIDE } from "@/config/sizeGuide";
 
 function isCollectionSoldOut(sizes: Dress["sizes"]) {
   const safeSizes = sizes ?? {};
   return !Object.values(safeSizes).some((items) =>
-    items.some((item) => item.status === "available")
+    items.some((item) => item.status === "available"),
   );
 }
 
 export default function InfoPanel({ dress }: { dress: Dress }) {
   const router = useRouter();
-  const [selectedSize, setSelectedSize] = useState<SelectedSize | null>(null);
+  const [selectedSize, setSelectedSize] = useState<SelectedSizeType | null>(
+    null,
+  );
+  const [showGuide, setShowGuide] = useState(false);
 
   const [snackbar, setSnackbar] = useState<string | null>(null);
 
@@ -42,7 +48,7 @@ export default function InfoPanel({ dress }: { dress: Dress }) {
 
   async function handleAddToCart() {
     if (!isLoggedIn) {
-      router.push(`/login?redirect=/dress/${dress.collection_id}`);
+      router.push(`/login?redirect=/collection/${dress.collection_id}`);
       return;
     }
 
@@ -52,6 +58,7 @@ export default function InfoPanel({ dress }: { dress: Dress }) {
       await addToCart({
         item_id: selectedSize.item_id,
       }).unwrap();
+      console.log(selectedSize);
 
       router.push("/cart");
     } catch (err) {
@@ -65,55 +72,63 @@ export default function InfoPanel({ dress }: { dress: Dress }) {
   }
 
   const soldOut = isCollectionSoldOut(dress.sizes);
-
   return (
-    <div className="flex flex-col gap-10">
-      {/* TITLE */}
+    <div className="space-y-8">
+      {/* Title */}
       <div className="space-y-2">
-        <h1 className="text-3xl md:text-4xl font-medium tracking-tight">
-          {dress.name}
-        </h1>
-        <div className="text-xl font-medium">₹{dress.cost.toFixed(0)}</div>
-        {soldOut && (
-          <span className="text-xs uppercase tracking-wide px-2 py-1 rounded-full bg-red-100 text-red-700">
-            Sold Out
-          </span>
-        )}
+        <h1 className="text-3xl font-medium">{dress.name}</h1>
+        <p className="text-lg text-foreground/70">{formatPrice(dress.cost)}</p>
       </div>
 
-      {/* DESCRIPTION */}
-      <p className="text-sm md:text-base text-foreground/70 leading-relaxed">
-        {dress.description}
-      </p>
+      {/* Description */}
+      {dress.description && (
+        <p className="text-base leading-relaxed text-foreground/70">
+          {dress.description}
+        </p>
+      )}
 
-      {/* SIZE */}
-      <SizeSelector
-        sizes={dress.sizes}
-        value={selectedSize}
-        onChange={setSelectedSize}
+      {/* Size */}
+      {dress.sizes && (
+        <SizeSelector
+          sizes={dress.sizes}
+          value={selectedSize}
+          onChange={setSelectedSize}
+        />
+      )}
+
+      <button
+        type="button"
+        onClick={() => setShowGuide(true)}
+        className="text-sm text-primary underline-offset-4 hover:underline"
+      >
+        Need help choosing a size?
+      </button>
+
+      <SizeGuideModal
+        open={showGuide}
+        onClose={() => setShowGuide(false)}
+        sizes={SIZE_GUIDE}
       />
 
       {/* CTA */}
-      <div className="space-y-4">
-        <GButton
-          size="lg"
-          disabled={!selectedSize || isLoading}
-          onClick={handleAddToCart}
-          className="w-full"
-        >
-          {isLoading ? "Adding…" : "Add to Cart"}
-        </GButton>
+      <GButton
+        size="lg"
+        disabled={!selectedSize || soldOut || isLoading}
+        className="w-full rounded-full"
+        onClick={handleAddToCart}
+      >
+        Add to Cart
+      </GButton>
 
-        {!isLoggedIn && (
-          <p className="text-sm text-foreground/60">
-            Please log in to add items to your cart.
-          </p>
-        )}
+      {!isLoggedIn && (
+        <p className="text-sm text-foreground/60">
+          Please log in to add items to your cart.
+        </p>
+      )}
 
-        {snackbar && (
-          <Snackbar message={snackbar} onClose={() => setSnackbar(null)} />
-        )}
-      </div>
+      {snackbar && (
+        <Snackbar message={snackbar} onClose={() => setSnackbar(null)} />
+      )}
     </div>
   );
 }

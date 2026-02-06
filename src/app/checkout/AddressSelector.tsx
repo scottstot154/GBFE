@@ -28,8 +28,8 @@ export default function AddressSelector({
     console.log("Selected address ID:", selectedId);
     setLoading(true);
     try {
-      const { checkout_id } = await createCheckout(selectedId);
-      router.push(`/checkout/payment?checkout=${checkout_id}`);
+      const checkoutId = await createCheckout(selectedId);
+      router.push(`/checkout/payment?checkout=${checkoutId}`);
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "An unexpected error occurred";

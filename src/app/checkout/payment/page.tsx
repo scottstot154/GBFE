@@ -4,11 +4,15 @@ import { finalizeCheckout } from "../actions";
 import { useRouter, useSearchParams } from "next/navigation";
 import GButton from "@/components/GButton";
 import { toast } from "react-hot-toast";
+import { cartApi } from "@/store/api/cartApi";
+import { useAppDispatch } from "@/store/hooks";
 
 export default function PaymentPage() {
   const router = useRouter();
   const params = useSearchParams();
   const checkoutId = params.get("checkout");
+
+  const dispatch = useAppDispatch();
 
   async function handlePaymentSuccess() {
     if (!checkoutId) return;
@@ -16,8 +20,11 @@ export default function PaymentPage() {
     try {
       const orderId = await finalizeCheckout(checkoutId);
 
-      // ✅ Redirect to orders page
-      router.push("/orders");
+      // ✅ Cart state refresh
+      dispatch(cartApi.util.invalidateTags(["Cart"]));
+
+      // ✅ Redirect user
+      router.push(`/orders/${orderId}`);
     } catch (err: unknown) {
       if (err instanceof Error) {
         toast.error(err.message);

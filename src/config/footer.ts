@@ -1,28 +1,29 @@
-// src/config/footer.ts
 export const footerConfig = {
   brand: {
     name: "Boutique",
     description:
-      "Handcrafted, ethically sourced dresses designed for everyday elegance.",
+      "Handcrafted, ethically sourced pieces inspired by Indian craftsmanship.",
   },
 
   shopLinks: [
-    { label: "New Arrivals", href: "/" },
-    { label: "Collections", href: "/" },
+    { id: "new-arrivals", label: "New Arrivals", href: "/" },
+    { id: "collections", label: "Collections", href: "/" },
+    { id: "best-sellers", label: "Best Sellers", href: "/" },
   ],
 
   supportLinks: [
-    { label: "Contact Us", href: "/contact" },
-    { label: "Shipping & Returns", href: "/returns" },
+    { id: "contact", label: "Contact Us", href: "/contact" },
+    { id: "shipping", label: "Shipping & Returns", href: "/shipping" },
+    { id: "size-guide", label: "Size Guide", href: "/size-guide" },
+  ],
+
+  legalLinks: [
+    { id: "privacy", label: "Privacy Policy", href: "/privacy" },
+    { id: "terms", label: "Terms of Service", href: "/terms" },
   ],
 
   socialLinks: {
     instagram: "https://instagram.com/yourbrand",
     pinterest: "https://pinterest.com/yourbrand",
   },
-
-  legalLinks: [
-    { label: "Privacy", href: "/privacy" },
-    { label: "Terms", href: "/terms" },
-  ],
 };

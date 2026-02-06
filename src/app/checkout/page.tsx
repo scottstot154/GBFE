@@ -24,15 +24,12 @@ export default function CheckoutPage() {
       </div>
 
       {/* CONTENT */}
-      {!data || data.addresses.length === 0 ? (
+      {!data || data.length === 0 ? (
         <AddAddressForm onDone={() => setMode("select")} />
       ) : mode === "add" ? (
         <AddAddressForm onDone={() => setMode("select")} />
       ) : (
-        <AddressSelector
-          addresses={data.addresses}
-          onAddNew={() => setMode("add")}
-        />
+        <AddressSelector addresses={data} onAddNew={() => setMode("add")} />
       )}
     </main>
   );

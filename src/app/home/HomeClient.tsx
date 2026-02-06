@@ -33,10 +33,13 @@ export default function HomeClient({
       />
 
       {/* COLLECTIONS */}
-      <section className="space-y-6">
-        <h2 className="text-2xl font-medium">Featured Collection</h2>
+      <section className="space-y-10">
+        <div className="flex items-center justify-between">
+          <h2 className="heading-section">Featured</h2>
+          <span className="text-small">Handcrafted · Ethical</span>
+        </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
           {collections.map((dress) => (
             <DressCard key={dress.collection_id} dress={dress} />
           ))}

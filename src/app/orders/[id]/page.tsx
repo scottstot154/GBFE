@@ -4,7 +4,9 @@ import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import { formatPrice } from "@/lib/formatPrice";
 import BackButton from "@/components/navigation/BackButton";
 import InvoiceButton from "./InvoiceButton";
-import type { Address, Order, OrderItem } from "@/types";
+import OrderItemsSkeleton from "./OrderItemsSkeleton";
+import type { Order, OrderItem } from "@/types";
+import Link from "next/link";
 
 export default async function OrderDetailsPage({
   params,
@@ -23,39 +25,34 @@ export default async function OrderDetailsPage({
     redirect(`/login?redirect=/orders/${id}`);
   }
 
-  // 1️⃣ Order
+  // 1️⃣ Order (must exist)
   const { data: order, error } = await supabase
     .from("orders")
-    .select("id, total_amount, status, created_at, address_id")
+    .select(
+      `
+        id,
+        total_amount,
+        status,
+        delivery_status,
+        created_at,
+        shipping_address
+      `,
+    )
     .eq("id", id)
     .eq("user_id", user.id)
     .single<Order>();
 
   if (!order || error) notFound();
 
-  // 2️⃣ Items
+  // 2️⃣ Items (can be empty, never crash)
   const { data: items } = await supabase
     .from("order_items")
-    .select("name, size, price, image")
-    .eq("order_id", order.id);
-
-  // 3️⃣ Address
-  const { data: address } = await supabase
-    .from("addresses")
-    .select("id, name, phone, line1, city, state, postal_code")
-    .eq("id", order.address_id)
-    .single<Address>();
-
-  if (!items || !address) notFound();
-
-  if (!items || items.length === 0) {
-    notFound();
-  }
+    .select("name, size, price, image, collection_id")
+    .eq("order_id", order.id)
+    .returns<OrderItem[]>();
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-16 space-y-10">
-      <BackButton fallback="/orders" />
-
       {/* HEADER */}
       <header className="space-y-2">
         <h1 className="text-2xl font-medium">Order #{order.id.slice(0, 8)}</h1>
@@ -63,7 +60,7 @@ export default async function OrderDetailsPage({
           Placed on {new Date(order.created_at).toLocaleDateString("en-IN")}
         </p>
         <span className="text-sm font-medium capitalize">
-          Status: {order.status}
+          Status: {order.delivery_status}
         </span>
       </header>
 
@@ -71,24 +68,37 @@ export default async function OrderDetailsPage({
       <section className="space-y-4">
         <h2 className="text-lg font-medium">Items</h2>
 
-        {items.map((item, idx) => (
-          <div key={idx} className="flex gap-4 p-4 border rounded-xl bg-card">
-            <div className="relative w-20 h-28 rounded overflow-hidden">
-              <Image
-                src={item.image ?? "/dress-placeholder.png"}
-                alt={item.name}
-                fill
-                className="object-cover"
-              />
-            </div>
+        {!items && <OrderItemsSkeleton />}
 
-            <div className="flex-1">
-              <p className="font-medium">{item.name}</p>
-              <p className="text-sm text-foreground/60">Size: {item.size}</p>
-              <p className="font-medium">{formatPrice(item.price)}</p>
+        {items && items.length === 0 && <EmptyItemsState />}
+
+        {items &&
+          items.length > 0 &&
+          items.map((item, idx) => (
+            <div
+              key={`${item.name}-${idx}`}
+              className="flex gap-4 p-4 border rounded-xl bg-card"
+            >
+              <Link
+                href={`/collection/${item.collection_id}`}
+                className="relative w-20 h-28 rounded overflow-hidden bg-muted flex-shrink-0
+             hover:opacity-90 transition cursor-pointer"
+              >
+                <Image
+                  src={item.image ?? "/dress-placeholder.png"}
+                  alt={item.name}
+                  fill
+                  className="object-cover"
+                />
+              </Link>
+
+              <div className="flex-1">
+                <p className="font-medium">{item.name}</p>
+                <p className="text-sm text-foreground/60">Size: {item.size}</p>
+                <p className="font-medium">{formatPrice(item.price)}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </section>
 
       {/* ADDRESS */}
@@ -96,18 +106,19 @@ export default async function OrderDetailsPage({
         <h2 className="text-lg font-medium">Delivery Address</h2>
 
         <div className="border rounded-xl bg-card p-4 text-sm space-y-1">
-          <p className="font-medium">{address.name}</p>
-          <p>{address.line1}</p>
+          <p className="font-medium">{order.shipping_address.name}</p>
+          <p>{order.shipping_address.line1}</p>
           <p>
-            {address.city}, {address.state} {address.postal_code}
+            {order.shipping_address.city}, {order.shipping_address.state}{" "}
+            {order.shipping_address.postal_code}
           </p>
-          <p>Phone: {address.phone}</p>
+          <p>Phone: {order.shipping_address.phone}</p>
         </div>
       </section>
 
       {/* ACTIONS */}
       <section className="pt-6">
-        <InvoiceButton order={order} items={items} address={address} />
+        <InvoiceButton order={order} items={items ?? []} />
       </section>
 
       {/* TOTAL */}
@@ -118,5 +129,15 @@ export default async function OrderDetailsPage({
         </span>
       </footer>
     </main>
+  );
+}
+
+/* ---------------- Empty State ---------------- */
+
+function EmptyItemsState() {
+  return (
+    <div className="border rounded-xl bg-card p-6 text-center text-sm text-foreground/60">
+      Items for this order are currently unavailable.
+    </div>
   );
 }
