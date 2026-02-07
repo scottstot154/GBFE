@@ -1,0 +1,75 @@
+import { NextResponse } from "next/server";
+import { createSupabaseServerClient } from "@/lib/supabaseServer";
+
+/**
+ * POST /api/cart/items
+ * Add item to cart
+ */
+export async function POST(req: Request) {
+  const supabase = await createSupabaseServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { item_id } = await req.json();
+
+  if (!item_id) {
+    return NextResponse.json({ error: "item_id required" }, { status: 400 });
+  }
+
+  const { data, error } = await supabase.rpc("add_to_cart", {
+    p_user_id: user.id,
+    p_item_id: item_id,
+  });
+
+  if (error) {
+    return NextResponse.json(
+      {
+        error: error.message,
+        code: error.code,
+      },
+      { status: 400 }
+    );
+  }
+
+  return NextResponse.json(data);
+}
+
+/**
+ * DELETE /api/cart/items
+ * Remove item from cart
+ */
+export async function DELETE(req: Request) {
+  const supabase = await createSupabaseServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { item_id } = await req.json();
+
+  if (!item_id) {
+    return NextResponse.json({ error: "item_id required" }, { status: 400 });
+  }
+
+  const { error } = await supabase
+    .from("cart_items")
+    .delete()
+    .eq("user_id", user.id)
+    .eq("item_id", item_id);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+
+  return NextResponse.json({ success: true });
+}
