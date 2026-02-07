@@ -10,7 +10,7 @@ export type Collection = {
 };
 
 export type SizeInventoryItem = {
-  status: "available" | "unavailable";
+  status: "available" | "sold_out";
   item_id: string;
 };
 

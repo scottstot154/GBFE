@@ -119,7 +119,16 @@
   .input {
     @apply w-full rounded-lg border border-[color:var(--border)]
       px-4 py-3 text-sm
+      bg-card text-foreground
       focus:outline-none focus:ring-2 focus:ring-primary;
+  }
+}
+
+@layer base {
+  select,
+  option {
+    color: hsl(var(--foreground));
+    background-color: hsl(var(--card));
   }
 }
 
