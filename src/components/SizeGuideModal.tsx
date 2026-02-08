@@ -2,16 +2,17 @@
 
 import { useRef } from "react";
 import { X } from "lucide-react";
-import { SizeGuide } from "@/types";
+import { SizeType } from "@/types";
+import { SIZE_GUIDE_SET, SIZE_GUIDE_TOP } from "@/config/sizeGuide";
 
 export default function SizeGuideModal({
   open,
   onClose,
-  sizes,
+  sizeType,
 }: {
   open: boolean;
   onClose: () => void;
-  sizes: SizeGuide[];
+  sizeType?: SizeType | null;
 }) {
   const startY = useRef<number | null>(null);
 
@@ -33,6 +34,8 @@ export default function SizeGuideModal({
     }
   }
 
+  const sizes = sizeType === "top" ? SIZE_GUIDE_TOP : SIZE_GUIDE_SET;
+
   return (
     <>
       {/* Overlay */}
@@ -45,6 +48,9 @@ export default function SizeGuideModal({
         className="
           fixed z-50 bg-card shadow-xl
           w-full md:w-[520px]
+          max-h-[85vh] md:max-h-[80vh]
+          overflow-hidden
+          flex flex-col
 
           /* MOBILE */
           bottom-0 left-0
@@ -75,7 +81,7 @@ export default function SizeGuideModal({
         </div>
 
         {/* Content */}
-        <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+        <div className="space-y-4 flex-1 min-h-0 overflow-y-auto">
           {sizes.map((size) => (
             <div
               key={size.label}

@@ -10,7 +10,6 @@ import { supabase } from "@/lib/supabaseClient";
 import Snackbar from "@/components/Snackbar";
 import { formatPrice } from "@/lib/formatPrice";
 import SizeGuideModal from "@/components/SizeGuideModal";
-import { SIZE_GUIDE } from "@/config/sizeGuide";
 
 function isCollectionSoldOut(sizes: Dress["sizes"]) {
   const safeSizes = sizes ?? {};
@@ -108,7 +107,7 @@ export default function InfoPanel({ dress }: { dress: Dress }) {
       <SizeGuideModal
         open={showGuide}
         onClose={() => setShowGuide(false)}
-        sizes={SIZE_GUIDE}
+        sizeType={dress.size_type}
       />
 
       {/* CTA */}

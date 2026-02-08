@@ -30,6 +30,14 @@ export default async function AdminCollectionsPage() {
             className="input"
             required
           />
+          <select
+            name="size_type"
+            className="input text-foreground bg-background"
+            defaultValue="set"
+          >
+            <option value="set">Set sizes (S-XXL)</option>
+            <option value="top">Top sizes (32-42)</option>
+          </select>
           <input name="image" placeholder="Main image URL" className="input" />
           <input
             name="images"
@@ -87,6 +95,14 @@ export default async function AdminCollectionsPage() {
                 defaultValue={c.cost ?? 0}
                 className="input"
               />
+              <select
+                name="size_type"
+                defaultValue={c.size_type ?? "set"}
+                className="input text-foreground bg-background"
+              >
+                <option value="set">Set sizes (S-XXL)</option>
+                <option value="top">Top sizes (32-42)</option>
+              </select>
               <input
                 name="image"
                 defaultValue={c.image ?? ""}

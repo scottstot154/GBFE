@@ -1,21 +1,26 @@
-export default function AboutPage() {
+import { getCmsPageServer } from "@/lib/cmsServer";
+import { HOME_ABOUT_DEFAULT } from "@/config/homeDefaults";
+
+export default async function AboutPage() {
+  const about = await getCmsPageServer("home-about", HOME_ABOUT_DEFAULT);
+
   return (
     <main className="max-w-3xl mx-auto px-4 py-16 space-y-8">
       <header className="space-y-2">
-        <h1 className="text-3xl font-medium tracking-tight">About Us</h1>
-        <p className="text-foreground/70">
-          Boutique is a small studio focused on handcrafted, beautiful ethically
-          sourced pieces inspired by Indian craftsmanship.
-        </p>
+        <h1 className="text-3xl font-medium tracking-tight">
+          {about.title ?? "About Us"}
+        </h1>
+        {about.subtitle && (
+          <p className="text-foreground/70">{about.subtitle}</p>
+        )}
       </header>
 
       <section className="space-y-3">
-        <h2 className="text-xl font-medium">Our Story</h2>
-        <p>
-          We design limited-run collections with a focus on quality materials,
-          responsible sourcing, and timeless silhouettes. Every piece is made
-          with care by skilled artisans.
-        </p>
+        {about.content?.paragraphs?.map((p, idx) => (
+          <p key={idx} className="text-foreground/80 leading-relaxed">
+            {p}
+          </p>
+        ))}
       </section>
 
       <section className="space-y-3">

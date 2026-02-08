@@ -15,11 +15,13 @@ export const footerConfig = {
     { id: "about", label: "About Us", href: "/about" },
     { id: "contact", label: "Contact Us", href: "/contact" },
     { id: "refund", label: "Refund & Cancellation", href: "/refund-policy" },
+    { id: "shipping", label: "Shipping & Delivery", href: "/shipping-policy" },
   ],
 
   legalLinks: [
     { id: "privacy", label: "Privacy Policy", href: "/privacy-policy" },
     { id: "terms", label: "Terms & Conditions", href: "/terms" },
+    { id: "grievance", label: "Grievance Redressal", href: "/grievance-redressal" },
   ],
 
   socialLinks: {

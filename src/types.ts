@@ -1,3 +1,5 @@
+export type SizeType = "top" | "set";
+
 export type Collection = {
   collection_id: string;
   name: string;
@@ -6,6 +8,7 @@ export type Collection = {
   images?: string[];
   tags?: string[];
   description?: string;
+  size_type?: SizeType | null;
   created_at: string;
 };
 
@@ -25,6 +28,7 @@ export type Dress = {
   image?: string;
   images?: string[];
   description?: string;
+  size_type?: SizeType | null;
   sizes?: SizesMap | null;
 };
 
