@@ -67,6 +67,7 @@ export default function NavBar() {
   async function handleLogout() {
     await supabase.auth.signOut();
     setOpenMenu(false);
+    router.refresh();
   }
 
   // 🛒 Cart
@@ -86,7 +87,7 @@ export default function NavBar() {
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* BRAND */}
         <Link href="/" className="text-lg font-medium tracking-tight">
-          Boutique
+          Gauri Boutique
         </Link>
 
         {/* NAV ACTIONS */}
@@ -97,7 +98,7 @@ export default function NavBar() {
               "text-sm transition-colors",
               pathname === "/"
                 ? "text-foreground"
-                : "text-foreground/60 hover:text-foreground"
+                : "text-foreground/60 hover:text-foreground",
             )}
           >
             Home
@@ -138,41 +139,41 @@ export default function NavBar() {
                   ref={menuRef}
                   className="absolute right-0 mt-3 z-50 w-64 rounded-xl border border-border bg-card shadow-xl"
                 >
-                    <div className="px-4 py-3 border-b border-border">
-                      <p className="text-sm font-medium">Account</p>
-                      {email && (
-                        <p className="text-xs text-foreground/60 truncate">
-                          {email}
-                        </p>
-                      )}
-                    </div>
+                  <div className="px-4 py-3 border-b border-border">
+                    <p className="text-sm font-medium">Account</p>
+                    {email && (
+                      <p className="text-xs text-foreground/60 truncate">
+                        {email}
+                      </p>
+                    )}
+                  </div>
 
-                    <nav className="p-2 space-y-1">
-                      <Link
-                        href="/orders"
-                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-foreground/70 hover:bg-muted hover:text-foreground transition"
-                      >
-                        <Icons.list className="w-4 h-4" />
-                        My Orders
-                      </Link>
-                      <Link
-                        href="/account/addresses"
-                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-foreground/70 hover:bg-muted hover:text-foreground transition"
-                      >
-                        <Icons.mapPin className="w-4 h-4" />
-                        Addresses
-                      </Link>
-                    </nav>
+                  <nav className="p-2 space-y-1">
+                    <Link
+                      href="/orders"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-foreground/70 hover:bg-muted hover:text-foreground transition"
+                    >
+                      <Icons.list className="w-4 h-4" />
+                      My Orders
+                    </Link>
+                    <Link
+                      href="/account/addresses"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-foreground/70 hover:bg-muted hover:text-foreground transition"
+                    >
+                      <Icons.mapPin className="w-4 h-4" />
+                      Addresses
+                    </Link>
+                  </nav>
 
-                    <div className="p-2 border-t border-border">
-                      <button
-                        onClick={handleLogout}
-                        className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-red-600/80 hover:text-red-600 hover:bg-red-50/60 transition"
-                      >
-                        <Icons.logout className="w-4 h-4" />
-                        Logout
-                      </button>
-                    </div>
+                  <div className="p-2 border-t border-border">
+                    <button
+                      onClick={handleLogout}
+                      className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-red-600/80 hover:text-red-600 hover:bg-red-50/60 transition"
+                    >
+                      <Icons.logout className="w-4 h-4" />
+                      Logout
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

@@ -26,6 +26,7 @@ export default function AccountDrawer({
   async function handleLogout() {
     await supabase.auth.signOut();
     onClose();
+    router.refresh();
     router.push("/");
   }
 
