@@ -1,6 +1,6 @@
 export const footerConfig = {
   brand: {
-    name: "Boutique",
+    name: "Gauri Boutique",
     description:
       "Handcrafted, ethically sourced pieces inspired by Indian craftsmanship.",
   },
@@ -12,14 +12,14 @@ export const footerConfig = {
   ],
 
   supportLinks: [
+    { id: "about", label: "About Us", href: "/about" },
     { id: "contact", label: "Contact Us", href: "/contact" },
-    { id: "shipping", label: "Shipping & Returns", href: "/shipping" },
-    { id: "size-guide", label: "Size Guide", href: "/size-guide" },
+    { id: "refund", label: "Refund & Cancellation", href: "/refund-policy" },
   ],
 
   legalLinks: [
-    { id: "privacy", label: "Privacy Policy", href: "/privacy" },
-    { id: "terms", label: "Terms of Service", href: "/terms" },
+    { id: "privacy", label: "Privacy Policy", href: "/privacy-policy" },
+    { id: "terms", label: "Terms & Conditions", href: "/terms" },
   ],
 
   socialLinks: {
