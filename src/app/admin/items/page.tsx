@@ -9,8 +9,28 @@ export default async function AdminItemsPage() {
 
   const { data: collections } = await supabase
     .from("collections")
-    .select("collection_id, name, image, sizes")
+    .select("collection_id, name, image")
     .order("created_at", { ascending: false });
+
+  const { data: items } = await supabase
+    .from("items")
+    .select("item_id, collection_id, size, status")
+    .order("created_at", { ascending: false });
+
+  const itemsByCollection = new Map<
+    string,
+    Record<string, Array<{ item_id: string; status: string }>>
+  >();
+
+  (items ?? []).forEach((item) => {
+    if (!item.collection_id || !item.size) return;
+    if (!itemsByCollection.has(item.collection_id)) {
+      itemsByCollection.set(item.collection_id, {});
+    }
+    const sizes = itemsByCollection.get(item.collection_id)!;
+    if (!sizes[item.size]) sizes[item.size] = [];
+    sizes[item.size].push({ item_id: item.item_id, status: item.status });
+  });
 
   return (
     <div className="space-y-6">
@@ -49,10 +69,11 @@ export default async function AdminItemsPage() {
 
       <section className="space-y-4">
         {collections?.map((c) => {
-          const sizes = (c.sizes ?? {}) as Record<
-            string,
-            Array<{ status: string; item_id: string }>
-          >;
+          const sizes =
+            itemsByCollection.get(c.collection_id) ?? ({} as Record<
+              string,
+              Array<{ status: string; item_id: string }>
+            >);
 
           return (
             <div key={c.collection_id} className="rounded-xl border bg-card p-6 space-y-4">
@@ -95,8 +116,6 @@ export default async function AdminItemsPage() {
                           </span>
 
                           <form action={updateSizeItemStatus} className="flex items-center gap-2">
-                            <input type="hidden" name="collection_id" value={c.collection_id} />
-                            <input type="hidden" name="size" value={sizeLabel} />
                             <input type="hidden" name="item_id" value={item.item_id} />
                             <select
                               name="status"
@@ -115,8 +134,6 @@ export default async function AdminItemsPage() {
                           </form>
 
                           <form action={removeSizeItem}>
-                            <input type="hidden" name="collection_id" value={c.collection_id} />
-                            <input type="hidden" name="size" value={sizeLabel} />
                             <input type="hidden" name="item_id" value={item.item_id} />
                             <button className="px-3 py-1 rounded-lg border text-xs text-red-600">
                               Remove

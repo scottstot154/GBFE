@@ -67,6 +67,7 @@ export default function NavBar() {
   async function handleLogout() {
     await supabase.auth.signOut();
     setOpenMenu(false);
+    router.refresh();
   }
 
   // 🛒 Cart
