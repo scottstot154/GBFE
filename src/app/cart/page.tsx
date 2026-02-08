@@ -128,13 +128,13 @@ export default function CartPage() {
           <span>{formatPrice(BigInt(data.total_price))}</span>
         </div>
 
-        <GButton
-          size="lg"
-          className="w-full rounded-full"
-          onClick={() => router.push("/checkout")}
-        >
-          Checkout
+        <GButton size="lg" className="w-full rounded-full" disabled>
+          Checkout (coming soon)
         </GButton>
+
+        <p className="text-xs text-foreground/60">
+          Waiting for payment integration.
+        </p>
 
         <GButton
           variant="outline"

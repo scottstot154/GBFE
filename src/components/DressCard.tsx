@@ -68,7 +68,7 @@ export default function DressCard({ dress }: { dress: Dress }) {
   }
 
   return (
-    <div className="bg-card rounded-xl transition-transform duration-300 hover:-translate-y-1">
+    <div className="bg-card rounded-xl transition-transform duration-300 hover:-translate-y-1 h-full flex flex-col">
       {/* IMAGE */}
       <div
         className="relative w-full aspect-[3/4] overflow-hidden rounded-t-xl bg-card"
@@ -142,14 +142,16 @@ export default function DressCard({ dress }: { dress: Dress }) {
       </div>
 
       {/* DETAILS */}
-      <div className="p-5 space-y-2">
-        <h3 className="heading-card">{dress.name}</h3>
+      <div className="p-5 flex flex-col flex-1 min-h-[140px]">
+        <div className="space-y-2">
+          <h3 className="heading-card">{dress.name}</h3>
 
-        {dress.description && (
-          <p className="text-muted line-clamp-2">{dress.description}</p>
-        )}
+          {dress.description && (
+            <p className="text-muted line-clamp-2">{dress.description}</p>
+          )}
+        </div>
 
-        <div className="pt-3 flex items-center justify-between">
+        <div className="pt-3 flex items-center justify-between mt-auto">
           <span className="text-price">{formatPrice(dress.cost)}</span>
 
           <Link
