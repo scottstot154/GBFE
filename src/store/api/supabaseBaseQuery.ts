@@ -13,14 +13,25 @@ export const supabaseBaseQuery =
   (): BaseQueryFn<SupabaseArgs, unknown, { message: string }> =>
   async ({ table, action, match, values }) => {
     try {
-      let query = supabase.from(table);
+      let response: { data: unknown; error: { message: string } | null } = {
+        data: null,
+        error: null,
+      };
 
-      if (action === "select") query = query.select("*");
-      if (action === "insert") query = query.insert(values);
-      if (action === "update") query = query.update(values).match(match || {});
-      if (action === "delete") query = query.delete().match(match || {});
+      if (action === "select") {
+        response = await supabase.from(table).select("*");
+      }
+      if (action === "insert") {
+        response = await supabase.from(table).insert(values);
+      }
+      if (action === "update") {
+        response = await supabase.from(table).update(values).match(match || {});
+      }
+      if (action === "delete") {
+        response = await supabase.from(table).delete().match(match || {});
+      }
 
-      const { data, error } = await query;
+      const { data, error } = response;
       if (error) return { error: { message: error.message } };
 
       return { data };
