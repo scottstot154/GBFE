@@ -17,6 +17,7 @@ export default function CollectionGrid({
         md:grid-cols-3
         lg:grid-cols-4
         gap-8
+        items-stretch
       "
     >
       {collections.map((dress) => (

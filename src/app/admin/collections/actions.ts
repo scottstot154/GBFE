@@ -10,6 +10,7 @@ export async function createCollection(formData: FormData) {
   const cost = Number(formData.get("cost") ?? 0);
   const description = String(formData.get("description") ?? "").trim();
   const image = String(formData.get("image") ?? "").trim() || null;
+  const size_type = String(formData.get("size_type") ?? "set").trim() || "set";
   const images = String(formData.get("images") ?? "")
     .split(",")
     .map((s) => s.trim())
@@ -38,6 +39,7 @@ export async function createCollection(formData: FormData) {
     cost,
     description,
     image,
+    size_type,
     images: images.length ? images : null,
     tags: tags.length ? tags : null,
     sizes,
@@ -57,6 +59,7 @@ export async function updateCollection(formData: FormData) {
   const cost = Number(formData.get("cost") ?? 0);
   const description = String(formData.get("description") ?? "").trim();
   const image = String(formData.get("image") ?? "").trim() || null;
+  const size_type = String(formData.get("size_type") ?? "set").trim() || "set";
   const images = String(formData.get("images") ?? "")
     .split(",")
     .map((s) => s.trim())
@@ -85,6 +88,7 @@ export async function updateCollection(formData: FormData) {
       cost,
       description,
       image,
+      size_type,
       images: images.length ? images : null,
       tags: tags.length ? tags : null,
       sizes,
