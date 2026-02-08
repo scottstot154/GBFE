@@ -3,9 +3,9 @@ import { createSupabaseServerClient } from "@/lib/supabaseServer";
 
 export async function DELETE(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const cartItemId = params.id;
+  const { id: cartItemId } = await params;
 
   if (!cartItemId) {
     return NextResponse.json(

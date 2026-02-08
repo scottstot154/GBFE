@@ -3,8 +3,9 @@ import { createSupabaseServerClient } from "@/lib/supabaseServer";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const supabase = await createSupabaseServerClient();
   const body = await req.json();
 
@@ -19,7 +20,7 @@ export async function PATCH(
   const { error } = await supabase
     .from("addresses")
     .update(body)
-    .eq("id", params.id)
+    .eq("id", id)
     .eq("user_id", user.id);
 
   if (error) {
@@ -31,9 +32,10 @@ export async function PATCH(
 
 export async function DELETE(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!params.id) {
+  const { id } = await params;
+  if (!id) {
     return NextResponse.json({ error: "Address id missing" }, { status: 400 });
   }
 
@@ -50,7 +52,7 @@ export async function DELETE(
   const { error } = await supabase
     .from("addresses")
     .delete()
-    .eq("id", params.id)
+    .eq("id", id)
     .eq("user_id", user.id);
 
   if (error) {
