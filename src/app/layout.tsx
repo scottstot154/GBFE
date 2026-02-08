@@ -7,8 +7,28 @@ import { Providers } from "./providers";
 import GlobalBackNav from "@/components/navigation/GlobalBackNav";
 
 export const metadata: Metadata = {
-  title: "Boutique",
+  metadataBase: new URL("https://gauriboutique.in"),
+  title: {
+    default: "Gauri Boutique",
+    template: "%s | Gauri Boutique",
+  },
   description: "Handcrafted collections inspired by Indian craftsmanship",
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Gauri Boutique",
+    title: "Gauri Boutique",
+    description: "Handcrafted collections inspired by Indian craftsmanship",
+  },
+  twitter: {
+    card: "summary",
+    title: "Gauri Boutique",
+    description: "Handcrafted collections inspired by Indian craftsmanship",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
