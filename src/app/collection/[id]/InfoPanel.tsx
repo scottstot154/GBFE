@@ -62,7 +62,8 @@ export default function InfoPanel({ dress }: { dress: Dress }) {
 
       router.push("/cart");
     } catch (err) {
-      if (err?.data?.code === "23505") {
+      const maybeErr = err as { data?: { code?: string } } | null;
+      if (maybeErr?.data?.code === "23505") {
         setSnackbar("Item already in cart");
         return;
       }

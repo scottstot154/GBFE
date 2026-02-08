@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useGetCartQuery } from "@/store/api/cartApi";
@@ -10,6 +10,7 @@ import clsx from "clsx";
 
 export default function NavBar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
