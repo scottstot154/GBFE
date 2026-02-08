@@ -78,6 +78,15 @@ export default function LoginPage() {
           </GButton>
         </form>
 
+        <div className="mt-4 text-center">
+          <Link
+            href="/forgot-password"
+            className="text-xs text-foreground/60 underline underline-offset-4"
+          >
+            Forgot password?
+          </Link>
+        </div>
+
         <p className="mt-8 text-xs text-center text-foreground/50">
           New here?{" "}
           <Link

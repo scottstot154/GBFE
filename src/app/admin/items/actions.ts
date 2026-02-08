@@ -14,35 +14,13 @@ export async function addSizeItem(formData: FormData) {
     throw new Error("collection_id and size are required");
   }
 
-  const { data: collection, error } = await supabase
-    .from("collections")
-    .select("sizes")
-    .eq("collection_id", collectionId)
-    .single();
+  const { error } = await supabase.from("items").insert({
+    collection_id: collectionId,
+    size: sizeLabel,
+    status,
+  });
 
-  if (error || !collection) throw new Error("Collection not found");
-
-  const sizes = (collection.sizes ?? {}) as Record<
-    string,
-    Array<{ status: string; item_id: string }>
-  >;
-
-  const itemId =
-    typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-
-  const next = { ...sizes };
-  const items = Array.isArray(next[sizeLabel]) ? next[sizeLabel] : [];
-  items.push({ status, item_id: itemId });
-  next[sizeLabel] = items;
-
-  const { error: updateError } = await supabase
-    .from("collections")
-    .update({ sizes: next })
-    .eq("collection_id", collectionId);
-
-  if (updateError) throw new Error(updateError.message);
+  if (error) throw new Error(error.message);
 
   revalidatePath("/admin/items");
   revalidatePath(`/collection/${collectionId}`);
@@ -51,80 +29,51 @@ export async function addSizeItem(formData: FormData) {
 export async function removeSizeItem(formData: FormData) {
   const { supabase } = await requireAdmin();
 
-  const collectionId = String(formData.get("collection_id") ?? "");
-  const sizeLabel = String(formData.get("size") ?? "").trim();
   const itemId = String(formData.get("item_id") ?? "").trim();
 
-  if (!collectionId || !sizeLabel || !itemId) {
-    throw new Error("collection_id, size, and item_id are required");
+  if (!itemId) {
+    throw new Error("item_id is required");
   }
 
-  const { data: collection, error } = await supabase
-    .from("collections")
-    .select("sizes")
-    .eq("collection_id", collectionId)
+  const { data: existing, error: fetchError } = await supabase
+    .from("items")
+    .select("collection_id")
+    .eq("item_id", itemId)
     .single();
 
-  if (error || !collection) throw new Error("Collection not found");
+  if (fetchError || !existing) throw new Error("Item not found");
 
-  const sizes = (collection.sizes ?? {}) as Record<
-    string,
-    Array<{ status: string; item_id: string }>
-  >;
-
-  const next = { ...sizes };
-  const items = Array.isArray(next[sizeLabel]) ? next[sizeLabel] : [];
-  next[sizeLabel] = items.filter((i) => i.item_id !== itemId);
-
-  const { error: updateError } = await supabase
-    .from("collections")
-    .update({ sizes: next })
-    .eq("collection_id", collectionId);
-
-  if (updateError) throw new Error(updateError.message);
+  const { error } = await supabase.from("items").delete().eq("item_id", itemId);
+  if (error) throw new Error(error.message);
 
   revalidatePath("/admin/items");
-  revalidatePath(`/collection/${collectionId}`);
+  revalidatePath(`/collection/${existing.collection_id}`);
 }
 
 export async function updateSizeItemStatus(formData: FormData) {
   const { supabase } = await requireAdmin();
 
-  const collectionId = String(formData.get("collection_id") ?? "");
-  const sizeLabel = String(formData.get("size") ?? "").trim();
   const itemId = String(formData.get("item_id") ?? "").trim();
   const status = String(formData.get("status") ?? "").trim();
 
-  if (!collectionId || !sizeLabel || !itemId || !status) {
-    throw new Error("collection_id, size, item_id, and status are required");
+  if (!itemId || !status) {
+    throw new Error("item_id and status are required");
   }
 
-  const { data: collection, error } = await supabase
-    .from("collections")
-    .select("sizes")
-    .eq("collection_id", collectionId)
+  const { data: existing, error: fetchError } = await supabase
+    .from("items")
+    .select("collection_id")
+    .eq("item_id", itemId)
     .single();
 
-  if (error || !collection) throw new Error("Collection not found");
+  if (fetchError || !existing) throw new Error("Item not found");
 
-  const sizes = (collection.sizes ?? {}) as Record<
-    string,
-    Array<{ status: string; item_id: string }>
-  >;
-
-  const next = { ...sizes };
-  const items = Array.isArray(next[sizeLabel]) ? next[sizeLabel] : [];
-  next[sizeLabel] = items.map((i) =>
-    i.item_id === itemId ? { ...i, status } : i
-  );
-
-  const { error: updateError } = await supabase
-    .from("collections")
-    .update({ sizes: next })
-    .eq("collection_id", collectionId);
-
-  if (updateError) throw new Error(updateError.message);
+  const { error } = await supabase
+    .from("items")
+    .update({ status })
+    .eq("item_id", itemId);
+  if (error) throw new Error(error.message);
 
   revalidatePath("/admin/items");
-  revalidatePath(`/collection/${collectionId}`);
+  revalidatePath(`/collection/${existing.collection_id}`);
 }
