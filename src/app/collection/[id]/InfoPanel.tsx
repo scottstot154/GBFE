@@ -76,13 +76,13 @@ export default function InfoPanel({ dress }: { dress: Dress }) {
     <div className="space-y-8">
       {/* Title */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-medium">{dress.name}</h1>
+        <h1 className="text-3xl font-medium break-words">{dress.name}</h1>
         <p className="text-lg text-foreground/70">{formatPrice(dress.cost)}</p>
       </div>
 
       {/* Description */}
       {dress.description && (
-        <p className="text-base leading-relaxed text-foreground/70">
+        <p className="text-base leading-relaxed text-foreground/70 break-words">
           {dress.description}
         </p>
       )}

@@ -1,3 +1,13 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Contact Us",
+  description: "Contact Gauri Boutique for orders, sizing, and custom inquiries.",
+  alternates: {
+    canonical: "/contact",
+  },
+};
+
 export default function ContactPage() {
   return (
     <main className="max-w-3xl mx-auto px-4 py-16 space-y-8">

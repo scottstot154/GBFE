@@ -2,8 +2,11 @@ import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import CollectionGrid from "./CollectionGrid";
 
 export const metadata = {
-  title: "Collections | Boutique",
-  description: "Explore all our handcrafted collections",
+  title: "Collections",
+  description: "Explore all our handcrafted collections at Gauri Boutique.",
+  alternates: {
+    canonical: "/collection",
+  },
 };
 
 export default async function CollectionsPage() {

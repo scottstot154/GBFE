@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Shipping & Delivery Policy",
+  description:
+    "Shipping timelines, charges, and delivery information for Gauri Boutique orders.",
+  alternates: {
+    canonical: "/shipping-policy",
+  },
+};
+
 export default function ShippingPolicyPage() {
   return (
     <main className="max-w-3xl mx-auto px-4 py-16 space-y-8">

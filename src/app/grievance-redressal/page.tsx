@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Grievance Redressal",
+  description:
+    "How to raise a grievance with Gauri Boutique and expected resolution timelines.",
+  alternates: {
+    canonical: "/grievance-redressal",
+  },
+};
+
 export default function GrievanceRedressalPage() {
   return (
     <main className="max-w-3xl mx-auto px-4 py-16 space-y-8">
