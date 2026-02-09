@@ -6,6 +6,7 @@ import InvoiceButton from "./InvoiceButton";
 import OrderItemsSkeleton from "./OrderItemsSkeleton";
 import type { Order, OrderItem } from "@/types";
 import Link from "next/link";
+import CancelOrderButton from "./CancelOrderButton";
 
 export default async function OrderDetailsPage({
   params,
@@ -61,6 +62,10 @@ export default async function OrderDetailsPage({
         <span className="text-sm font-medium capitalize">
           Status: {order.delivery_status}
         </span>
+        <CancelOrderButton
+          orderId={order.id}
+          deliveryStatus={order.delivery_status}
+        />
       </header>
 
       {/* ITEMS */}
