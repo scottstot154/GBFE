@@ -14,17 +14,18 @@ export default function RefundPolicyPage() {
       <section className="space-y-3">
         <h2 className="text-xl font-medium">Order Cancellations</h2>
         <p>
-          Orders can be cancelled within 24 hours of placement, provided the
-          order has not been shipped.
+          Orders can be cancelled and refunded only if they have not been
+          shipped yet. Once an order is shipped, it cannot be cancelled.
         </p>
       </section>
 
       <section className="space-y-3">
         <h2 className="text-xl font-medium">Returns & Refunds</h2>
         <p>
-          Returns are accepted within 7 days of delivery if the product is
-          unused and in original condition. Refunds are processed to the
-          original payment method within 7–10 business days after inspection.
+          As a small business, we are working to build a smooth returns process.
+          Shipped orders are not eligible for cancellation at this time. If you
+          have an issue with your order, please contact us and we will do our
+          best to help.
         </p>
       </section>
 

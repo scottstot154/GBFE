@@ -6,7 +6,8 @@ export default function ShippingPolicyPage() {
           Shipping & Delivery Policy
         </h1>
         <p className="text-foreground/70">
-          We ship across India and work to deliver your order quickly and safely.
+          We ship across India and work to deliver your order quickly and
+          safely.
         </p>
       </header>
 
@@ -14,7 +15,8 @@ export default function ShippingPolicyPage() {
         <h2 className="text-xl font-medium">Processing Time</h2>
         <p>
           Orders are typically processed within 1–3 business days after payment
-          confirmation. During peak periods, processing may take slightly longer.
+          confirmation. During peak periods, processing may take slightly
+          longer.
         </p>
       </section>
 
@@ -33,17 +35,15 @@ export default function ShippingPolicyPage() {
 
       <section className="space-y-3">
         <h2 className="text-xl font-medium">Order Tracking</h2>
-        <p>
-          Once shipped, you will receive tracking details by email or WhatsApp.
-        </p>
+        <p>Once shipped, you will receive tracking details by email.</p>
       </section>
 
       <section className="space-y-3">
         <h2 className="text-xl font-medium">Delivery Issues</h2>
         <p>
-          If a delivery attempt fails due to an incorrect address or unavailability,
-          the courier may re-attempt or return the shipment to us. Please contact
-          us promptly for assistance.
+          If a delivery attempt fails due to an incorrect address or
+          unavailability, the courier may re-attempt or return the shipment to
+          us. Please contact us promptly for assistance.
         </p>
       </section>
 
