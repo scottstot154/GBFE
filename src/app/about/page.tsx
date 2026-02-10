@@ -1,5 +1,15 @@
 import { getCmsPageServer } from "@/lib/cmsServer";
 import { HOME_ABOUT_DEFAULT } from "@/config/homeDefaults";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About Us",
+  description:
+    "Learn about Gauri Boutique, our story, and the craftsmanship behind our collections.",
+  alternates: {
+    canonical: "/about",
+  },
+};
 
 export default async function AboutPage() {
   const about = await getCmsPageServer("home-about", HOME_ABOUT_DEFAULT);

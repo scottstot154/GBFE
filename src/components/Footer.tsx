@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import { footerConfig } from "@/config/footer";
-import { SiInstagram, SiPinterest } from "react-icons/si";
+import { SiInstagram } from "react-icons/si";
 
 const Footer: React.FC = () => {
   const { brand, shopLinks, supportLinks, socialLinks, legalLinks } =
@@ -75,18 +75,6 @@ const Footer: React.FC = () => {
                   className="text-foreground/60 hover:text-primary transition"
                 >
                   <SiInstagram className="w-5 h-5" />
-                </a>
-              )}
-
-              {socialLinks.pinterest && (
-                <a
-                  href={socialLinks.pinterest}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Pinterest"
-                  className="text-foreground/60 hover:text-primary transition"
-                >
-                  <SiPinterest className="w-5 h-5" />
                 </a>
               )}
             </div>

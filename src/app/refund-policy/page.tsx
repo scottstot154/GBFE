@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Refund & Cancellation Policy",
+  description:
+    "Understand cancellations, refunds, and support policies at Gauri Boutique.",
+  alternates: {
+    canonical: "/refund-policy",
+  },
+};
+
 export default function RefundPolicyPage() {
   return (
     <main className="max-w-3xl mx-auto px-4 py-16 space-y-8">
