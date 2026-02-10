@@ -25,7 +25,6 @@ export const footerConfig = {
   ],
 
   socialLinks: {
-    instagram: "https://instagram.com/yourbrand",
-    pinterest: "https://pinterest.com/yourbrand",
+    instagram: "https://www.instagram.com/thegauriboutique/",
   },
 };

@@ -4,7 +4,7 @@ import { HOME_BANNER_DEFAULT, HOME_ABOUT_DEFAULT } from "@/config/homeDefaults";
 import { getCmsPageServer } from "@/lib/cmsServer";
 
 export const metadata = {
-  title: "Boutique - Home",
+  title: "Gauri Boutique - Home",
   description: "Handcrafted, ethically sourced dresses",
 };
 
